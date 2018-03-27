@@ -13,43 +13,43 @@
    `assign`其实也可以用来修饰对象，被`assign`修饰的对象在释放之后，指针的地址还是存在的，也就是说`assign`只是会对这片内存空间释放旧值，指针并没有被置为nil。如果在后续的内存分配中，刚好分到了这块地址，会出现野指针程序就会崩溃掉。
 
    ```objective-c
-// 资源
-NSMutableString *originStr = [[NSMutableString alloc] initWithString:@"originStrValue"];
-// `assign`修饰的对象`assignMStr`，指针指向这块资源地址
-self.assignMStr = originStr;
-// 这块资源被置空
-originStr = nil;
-/*
-assign`修饰的对象的值已被释放，但`assign`修饰的对象指针并没有被置空，再访问这个对象会出现野指针，所以程序崩溃。如果修饰符为`weak`则不会崩溃。
-*/
-NSLog(@"assignMStr输出:%p,%@",self.assignMStr, self.assignMStr);
+   // 资源
+   NSMutableString *originStr = [[NSMutableString alloc] initWithString:@"originStrValue"];
+   // `assign`修饰的对象`assignMStr`，指针指向这块资源地址
+   self.assignMStr = originStr;
+   // 这块资源被置空
+   originStr = nil;
+   /*
+   assign`修饰的对象的值已被释放，但`assign`修饰的对象指针并没有被置空，再访问这个对象会出现野指针，所以程序崩溃。如果修饰符为`weak`则不会崩溃。
+   */
+   NSLog(@"assignMStr输出:%p,%@",self.assignMStr, self.assignMStr);
    ```
 
 - `copy`（拷贝）
 当`copy`修饰的属性，指针指向：
   - 可变变量：例如`NSMutableString`，为深拷贝。
 
-  ```objective-c
-  @interface ViewController ()
-  @property (nonatomic, copy) NSString *str;
-  @end
+      ```objective-c
+      @interface ViewController ()
+      @property (nonatomic, copy) NSString *str;
+      @end
 
-  @implementation ViewController
-   - (void)viewDidLoad {
-       NSMutableString *mutableStr = [NSMutableString stringWithFormat:@"mutableStr"];
-       self.str = mutableStr; // copy修饰的str属性，指针指向mutableStr
-       [mutableStr appendFormat:@" is chaged"]; // 原值已经被修改
-       NSLog(@"str:%@,mutableStr:%@;\nstr内存地址:%p,mutableStr内存地址:%p",self.str,mutableStr,self.str,mutableStr);
-/*
- 打印：
- str:mutableStr,mutableStr:mutableStr is chaged;
- str内存地址:0x60400002a940,mutableStr内存地址:0x60400024a890
+      @implementation ViewController
+      - (void)viewDidLoad {
+          NSMutableString *mutableStr = [NSMutableString stringWithFormat:@"mutableStr"];
+          self.str = mutableStr; // copy修饰的str属性，指针指向mutableStr
+          [mutableStr appendFormat:@" is chaged"]; // 原值已经被修改
+          NSLog(@"str:%@,mutableStr:%@;\nstr内存地址:%p,mutableStr内存地址:%p",self.str,mutableStr,self.str,mutableStr);
+      /*
+       打印：
+       str:mutableStr,mutableStr:mutableStr is chaged;
+       str内存地址:0x60400002a940,mutableStr内存地址:0x60400024a890
 
- 结论：copy会重新开辟新的内存来保存一份相同的数据，被赋值对象和原值修改互不影响。
- */
-}
-  @end
-  ```
+       结论：copy会重新开辟新的内存来保存一份相同的数据，被赋值对象和原值修改互不影响。
+       */
+      }
+      @end
+      ```
 
   - 可变变量容器：例如`NSMutableArray`，容器本身为深拷贝，其中数据元素在拷贝的时候为浅拷贝。
 
