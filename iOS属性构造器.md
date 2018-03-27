@@ -13,16 +13,16 @@
    `assign`其实也可以用来修饰对象，被`assign`修饰的对象在释放之后，指针的地址还是存在的，也就是说`assign`只是会对这片内存空间释放旧值，指针并没有被置为nil。如果在后续的内存分配中，刚好分到了这块地址，会出现野指针程序就会崩溃掉。
 
    ```objective-c
-// 资源
-NSMutableString *originStr = [[NSMutableString alloc] initWithString:@"originStrValue"];
-// `assign`修饰的对象`assignMStr`，指针指向这块资源地址
-self.assignMStr = originStr;
-// 这块资源被置空
-originStr = nil;
-/*
-assign`修饰的对象的值已被释放，但`assign`修饰的对象指针并没有被置空，再访问这个对象会出现野指针，所以程序崩溃。如果修饰符为`weak`则不会崩溃。
-*/
-NSLog(@"assignMStr输出:%p,%@",self.assignMStr, self.assignMStr);
+   // 资源
+   NSMutableString *originStr = [[NSMutableString alloc] initWithString:@"originStrValue"];
+   // `assign`修饰的对象`assignMStr`，指针指向这块资源地址
+   self.assignMStr = originStr;
+   // 这块资源被置空
+   originStr = nil;
+   /*
+   assign`修饰的对象的值已被释放，但`assign`修饰的对象指针并没有被置空，再访问这个对象会出现野指针，所以程序崩溃。如果修饰符为`weak`则不会崩溃。
+   */
+   NSLog(@"assignMStr输出:%p,%@",self.assignMStr, self.assignMStr);
    ```
 
 - `copy`（拷贝）
