@@ -29,27 +29,27 @@
 当`copy`修饰的属性，指针指向：
   - 可变变量：例如`NSMutableString`，为深拷贝。
 
-  ```objective-c
-  @interface ViewController ()
-  @property (nonatomic, copy) NSString *str;
-  @end
+      ```objective-c
+      @interface ViewController ()
+      @property (nonatomic, copy) NSString *str;
+      @end
 
-  @implementation ViewController
-   - (void)viewDidLoad {
-       NSMutableString *mutableStr = [NSMutableString stringWithFormat:@"mutableStr"];
-       self.str = mutableStr; // copy修饰的str属性，指针指向mutableStr
-       [mutableStr appendFormat:@" is chaged"]; // 原值已经被修改
-       NSLog(@"str:%@,mutableStr:%@;\nstr内存地址:%p,mutableStr内存地址:%p",self.str,mutableStr,self.str,mutableStr);
-/*
- 打印：
- str:mutableStr,mutableStr:mutableStr is chaged;
- str内存地址:0x60400002a940,mutableStr内存地址:0x60400024a890
+      @implementation ViewController
+      - (void)viewDidLoad {
+          NSMutableString *mutableStr = [NSMutableString stringWithFormat:@"mutableStr"];
+          self.str = mutableStr; // copy修饰的str属性，指针指向mutableStr
+          [mutableStr appendFormat:@" is chaged"]; // 原值已经被修改
+          NSLog(@"str:%@,mutableStr:%@;\nstr内存地址:%p,mutableStr内存地址:%p",self.str,mutableStr,self.str,mutableStr);
+      /*
+       打印：
+       str:mutableStr,mutableStr:mutableStr is chaged;
+       str内存地址:0x60400002a940,mutableStr内存地址:0x60400024a890
 
- 结论：copy会重新开辟新的内存来保存一份相同的数据，被赋值对象和原值修改互不影响。
- */
-}
-  @end
-  ```
+       结论：copy会重新开辟新的内存来保存一份相同的数据，被赋值对象和原值修改互不影响。
+       */
+      }
+      @end
+      ```
 
   - 可变变量容器：例如`NSMutableArray`，容器本身为深拷贝，其中数据元素在拷贝的时候为浅拷贝。
 
