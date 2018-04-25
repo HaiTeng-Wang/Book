@@ -133,7 +133,7 @@ Property with 'weak' attribute must be of object type
   ```
 
 
-## 10. copy
+## 10. [copy](https://github.com/HaiTeng-Wang/Book/blob/master/%40property内存语义修饰符Copy.md)
 
 ---
 
