@@ -90,7 +90,7 @@ IMP参数包含 id 和 SEL 类型。通过一组 id 和 SEL 参数就能确定�
 
 #### 我们可以通过runtime做些什么？
 
-我们可以通过runtime提供的接口做很多操作，操作objec、class、ivar、method、property、protocol、等，一般的业务代码，使用runtime的机会确实不多，下面是一些常见的runtime使用场景：
+我们可以通过runtime提供的接口做很多操作，操作objec、class、ivar、method、property、protocol、等等...，下面是一些常见的runtime使用场景：
 
 - [通过消息转发机制，实现多继承](http://blog.ypli.xyz/ios/objective-c-runtimexiao-xi-zhuan-fa-shi-xian-duo-ji-cheng)
 
