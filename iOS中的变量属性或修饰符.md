@@ -147,78 +147,77 @@ iOS4 = unsafe_unretained
 
 #### Topic:
 
-- **ARC之后出现四个[变量标识符：](https://developer.apple.com/library/content/releasenotes/ObjectiveC/RN-TransitioningToARC/Introduction/Introduction.html#//apple_ref/doc/uid/TP40011226-CH1-SW4)**
+##### Topic1: ARC之后出现四个[变量标识符：](https://developer.apple.com/library/content/releasenotes/ObjectiveC/RN-TransitioningToARC/Introduction/Introduction.html#//apple_ref/doc/uid/TP40011226-CH1-SW4)
 
-  `__strong`:
+`__strong`:
 
-   - 是默认值。 只要有一个强指针，一个对象就保持“活着”。
-
-   - 变量标识符的用法如下：
+- 是默认值。 只要有一个强指针，一个对象就保持“活着”。
+  - 变量标识符的用法如下：
     ```Objective-C
     Number* __strong num = [[Number alloc] init];
     ```
-   - 注意 __strong 的位置应该放到 * 和变量名中间，放到其他的位置严格意义上说是不正确的，只不过编译器不会报错。
+  - 注意 __strong 的位置应该放到 * 和变量名中间，放到其他的位置严格意义上说是不正确的，只不过编译器不会报错。
 
-  `__weak`:
-  - 指定一个引用，该引用不会使引用的对象保持活着状态。 当没有强引用时，弱引用设置为零，指针置空nil。
+`__weak`:
 
-  `__unsafe_unretained`:
+- 指定一个引用，该引用不会使引用的对象保持活着状态。 当没有强引用时，弱引用设置为零，指针置空nil。
 
-  - 和weak相似，但是它所引用的对象被从内存中解除，指针就会悬空(出现了野指针)。
+`__unsafe_unretained`:
 
-  `__autoreleasing`：
-   - 用于标示使用引用传值的参数(id *)，在函数返回时会被自动释放掉；（文档原话翻译）
-   - 在ARC中__autoreleasing修饰的对象会自动注册到autoreleasepool中，使对象延迟释放，自动释放。
+- 和weak相似，但是它所引用的对象被从内存中解除，指针就会悬空(出现了野指针)。
 
-   - 在ARC中，所有这种指针的指针 （NSError **）的函数参数如果不加修饰符，编译器会默认将他们认定为__autoreleasing类型；
+`__autoreleasing`：
+- 用于标示使用引用传值的参数(id *)，在函数返回时会被自动释放掉；（文档原话翻译）
+- 在ARC中__autoreleasing修饰的对象会自动注册到autoreleasepool中，使对象延迟释放，自动释放。
 
-   - 某些类的方法会隐式地使用自己的autorelease pool，在这种时候使用__autoreleasing类型要特别小心。
+- 在ARC中，所有这种指针的指针 （NSError **）的函数参数如果不加修饰符，编译器会默认将他们认定为__autoreleasing类型；
+
+- 某些类的方法会隐式地使用自己的autorelease pool，在这种时候使用__autoreleasing类型要特别小心。
 
 
+##### Topic2: `__block`
 
-- **`__block` **
-
- - [Use Lifetime Qualifiers to Avoid Strong Reference Cycles](https://developer.apple.com/library/content/releasenotes/ObjectiveC/RN-TransitioningToARC/Introduction/Introduction.html#//apple_ref/doc/uid/TP40011226-CH1-SW4):
+- [Use Lifetime Qualifiers to Avoid Strong Reference Cycles](https://developer.apple.com/library/content/releasenotes/ObjectiveC/RN-TransitioningToARC/Introduction/Introduction.html#//apple_ref/doc/uid/TP40011226-CH1-SW4):
  > MRC模式下，`__block`修饰的对象不会retain; 但是ARC模式下默认会retain；如果你不想让它retain，在前面加上 `__unsafe_unretained`, `变成__unsafe_unretained` `__block id x`; `为了防止使用修饰符__unsafe_unretained` 的指针指向object被释放掉，可以改为使用`__weak`。或者把`__block`变量指针设置为nil的方式来避免循环引用的问题。
 
- - 也就是说`__block`在MRC时代有两个作用：
-    - 说明修饰的变量可改；
-    - 说明指针指向的对象不做这个隐式的retain操作；
+- 也就是说`__block`在MRC时代有两个作用：
+  - 说明修饰的变量可改；
+  - 说明指针指向的对象不做这个隐式的retain操作；
 
- - ARC后
-    - 说明修饰的变量可改:
-    - 说明指针指向的**对象（引用类型）**默认会retain操作；
+- ARC后
+  - 说明修饰的变量可改:
+  - 说明指针指向的**对象（引用类型）**默认会retain操作；
 
-      所以要注意一件事情：
-      [Frequently Asked Questions - How do blocks work in ARC?](https://developer.apple.com/library/content/releasenotes/ObjectiveC/RN-TransitioningToARC/Introduction/Introduction.html#//apple_ref/doc/uid/TP40011226-CH1-SW17)
-     >`NSString * __block myString`在ARC中是被retained，并不是一个指针。要想获取以前的行为，使用`__block NSString * __unsafe_unretained myString`或者(最好使用)`__block NSString * __weak myString`。
+    所以要注意一件事情：
+    [Frequently Asked Questions - How do blocks work in ARC?](https://developer.apple.com/library/content/releasenotes/ObjectiveC/RN-TransitioningToARC/Introduction/Introduction.html#//apple_ref/doc/uid/TP40011226-CH1-SW17)
+    >`NSString * __block myString`在ARC中是被retained，并不是一个指针。要想获取以前的行为，使用`__block NSString * __unsafe_unretained myString`或者(最好使用)`__block NSString * __weak myString`。
 
-    - 当我们在block块中操作一个没有使用__block修饰的局部变量，编译器会爆error提示：
+- 当我们在block块中操作一个没有使用__block修饰的局部变量，编译器会爆error提示：
 
-       ```Objective-C
-       Variable is not assignable (missing __block type specifier)
-       ```
+  ```Objective-C
+  Variable is not assignable (missing __block type specifier)
+  ```
 
-  - __block对申明block实现的影响：
+- __block对申明block实现的影响：
 
-    - 为什么使用__block修饰的变量，才可以在block被修改？
+  - 为什么使用__block修饰的变量，才可以在block被修改？
 
-      通过clang工具可看到，block其实也是一个结构体block_impl_0。结构体block_impl_0 中引用的是 Block_byref_（__block修饰的变量）_0 的结构体指针，这样就可以达到修改外部变量的作用。
+    通过clang工具可看到，block其实也是一个结构体block_impl_0。结构体block_impl_0 中引用的是 Block_byref_（__block修饰的变量）_0 的结构体指针，这样就可以达到修改外部变量的作用。
 
-      没有使用__block修饰的变量，实际是在申明 block 时，是被复制到 block_impl_0 结构体中。因为这样，在 block 内部修改变量的内容，不会影响外部的实际变量。
+    没有使用__block修饰的变量，实际是在申明 block 时，是被复制到 block_impl_0 结构体中。因为这样，在 block 内部修改变量的内容，不会影响外部的实际变量。
 
-      (对于这个问题，我参考的是唐巧大大的博文[谈Objective-C block的实现]()。我们看不到源代码，官方也没有明确说明。很多东西也都是猜测，推理。所以挖太深也真的是头疼！)
+    (对于这个问题，我参考的是唐巧大大的博文[谈Objective-C block的实现]()。我们看不到源代码，官方也没有明确说明。很多东西也都是猜测，推理。所以挖太深也真的是头疼！)
 
 
- 题外话：须知道static的变量和全局变量不需要加__block就可以在Block中修改。
+- 题外话：须知道static的变量和全局变量不需要加__block就可以在Block中修改。
 
-- **[ARC与Toll-Free Bridging](https://developer.apple.com/library/content/documentation/General/Conceptual/CocoaEncyclopedia/Toll-FreeBridgin/Toll-FreeBridgin.html)**
+##### Topic3: [ARC与Toll-Free Bridging](https://developer.apple.com/library/content/documentation/General/Conceptual/CocoaEncyclopedia/Toll-FreeBridgin/Toll-FreeBridgin.html)
 
- - 函数和方法也是可以互换的 - 我们可以将CFRelease与Cocoa对象一起使用，并通过Core Foundation对象进行释放和自动释放；
+- 函数和方法也是可以互换的 - 我们可以将CFRelease与Cocoa对象一起使用，并通过Core Foundation对象进行释放和自动释放；
 
- - 这页文档中，列出了免桥接对象；
+- 这页文档中，列出了免桥接对象；
 
- - 并非所有数据类型都是免费桥接的。Core Foundation依然是之前的MRC机制，为了和谐Core Foundation类型的对象和Objective-C类型的对象出现一些“桥接修饰符”。
+- 并非所有数据类型都是免费桥接的。Core Foundation依然是之前的MRC机制，为了和谐Core Foundation类型的对象和Objective-C类型的对象出现一些“桥接修饰符”。
 
 
 关于“桥接修饰符”，以及以上三个话题。部分参考这篇文章【[iOS开发ARC内存管理技术要点](https://www.cnblogs.com/flyFreeZn/p/4264220.html)】作者写于15年。
