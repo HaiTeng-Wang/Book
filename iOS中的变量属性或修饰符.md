@@ -178,7 +178,7 @@ iOS4 = unsafe_unretained
 ##### Topic2: `__block`
 
 - [Use Lifetime Qualifiers to Avoid Strong Reference Cycles](https://developer.apple.com/library/content/releasenotes/ObjectiveC/RN-TransitioningToARC/Introduction/Introduction.html#//apple_ref/doc/uid/TP40011226-CH1-SW4):
- > MRC模式下，`__block`修饰的对象不会retain; 但是ARC模式下默认会retain；如果你不想让它retain，在前面加上 `__unsafe_unretained`, `变成__unsafe_unretained` `__block id x`; `为了防止使用修饰符__unsafe_unretained` 的指针指向object被释放掉，可以改为使用`__weak`。或者把`__block`变量指针设置为nil的方式来避免循环引用的问题。
+  > MRC模式下，`__block`修饰的对象不会retain; 但是ARC模式下默认会retain；如果你不想让它retain，在前面加上 `__unsafe_unretained`, `变成__unsafe_unretained` `__block id x`; `为了防止使用修饰符__unsafe_unretained` 的指针指向object被释放掉，可以改为使用`__weak`。或者把`__block`变量指针设置为nil的方式来避免循环引用的问题。
 
 - 也就是说`__block`在MRC时代有两个作用：
   - 说明修饰的变量可改；
