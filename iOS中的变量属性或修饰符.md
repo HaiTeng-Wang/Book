@@ -6,7 +6,7 @@
 02. nonatomic
 03. readonly
 04. readwrite                    // default
-05. strong  (iOS4 = retain)	     // default
+05. strong  (iOS4 = retain)	 // default
 06. retain
 07. weak (iOS4 = unsafe_unretained)
 08. unsafe_unretained
