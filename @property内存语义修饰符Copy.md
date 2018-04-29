@@ -1,6 +1,17 @@
 
 # @property内存语义修饰符Copy
 
+## 索引：
+- [属性修饰符copy](https://github.com/HaiTeng-Wang/Book/blob/master/%40property内存语义修饰符Copy.md#属性修饰符copy)
+- [需知道](https://github.com/HaiTeng-Wang/Book/blob/master/%40property内存语义修饰符Copy.md#需知道)
+- [需注意](https://github.com/HaiTeng-Wang/Book/blob/master/%40property内存语义修饰符Copy.md#需注意)
+- [例子](https://github.com/HaiTeng-Wang/Book/blob/master/%40property内存语义修饰符Copy.md#例子)
+  - [例子1、不可变变量用strong还是copy修饰](https://github.com/HaiTeng-Wang/Book/blob/master/%40property内存语义修饰符Copy.md#例子1不可变变量用strong还是copy修饰)
+  - [例子2、不可变变量容器用strong还是copy修饰](https://github.com/HaiTeng-Wang/Book/blob/master/%40property内存语义修饰符Copy.md#例子2不可变变量容器用strong还是copy修饰)
+  - [例子3、使用copy修饰自定义对象有意义吗](https://github.com/HaiTeng-Wang/Book/blob/master/%40property内存语义修饰符Copy.md#例子3使用copy修饰自定义对象有意义吗)
+
+  - [例子4、block作为属性使用什么修饰](https://github.com/HaiTeng-Wang/Book/blob/master/%40property内存语义修饰符Copy.md#例子4block作为属性使用什么修饰)
+
 #### 属性修饰符copy:
 - copy一般用在修饰有可变对应类型的不可变对象上，如NSString, NSArray, NSDictionary。
 
