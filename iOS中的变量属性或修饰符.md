@@ -23,7 +23,7 @@
 ## 01 `atomic`
 
 - 默认行为；
-- 给setter/getter上锁(@synchronized)，来确保变量值得安全性；
+- 为确保其原子性(可理解为：多个操作 不可被打乱或切割)，使用锁定机制给setter/getter上锁(@synchronized)，来使得变量值更具安全性；
 - 但是性能低；
 - 保证系统生成setter/getter操作完整性，不受其它线程影响。但是并不是真正的多线程访问安全。
 
@@ -223,14 +223,6 @@ iOS4 = unsafe_unretained
 关于“桥接修饰符”，以及以上三个话题。部分参考这篇文章【[iOS开发ARC内存管理技术要点](https://www.cnblogs.com/flyFreeZn/p/4264220.html)】作者写于15年。
 
 【[Objective-C 内存管理——你需要知道的一切]()】这篇文章对OC内存管理方面总结的不错。
-
----
-
-#### Discussion：
-1、大量博客中说assign是默认关键字。但没给相关文档链接。原谅我并未查找到相关文档中有说明“assign是默认关键字”。但是在官方的大量.h文件中。assign修饰值类型，确实是省略没有写。
-
-2、原子性atomic作为iOS原子性语义，采用什么锁，来保证Setter/getter方法的完整性？
-有的人说：“使用同步锁@synchronized”；还有的人说：“使用自旋锁”；还有的人说：“如果属性具备atomic特质，同步锁，nonatomic使用的是自旋锁。
 
 ---
 #### Reference：

@@ -3,7 +3,7 @@
 参考：
 > [Objective-C Runtime Programming Guide](https://developer.apple.com/library/content/documentation/Cocoa/Conceptual/ObjCRuntimeGuide/Introduction/Introduction.html#//apple_ref/doc/uid/TP40008048)
 
-> [Objective-C Runtime](http://yulingtianxia.com/blog/2014/11/05/objective-c-runtime/#SEL)
+> [Objective-C Runtime](https://developer.apple.com/documentation/objectivec/objective_c_runtime)
 
 > [Objective-C 消息发送与转发机制原理](http://yulingtianxia.com/blog/2016/06/15/Objective-C-Message-Sending-and-Forwarding/)
 
