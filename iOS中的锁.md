@@ -74,41 +74,41 @@ typedef struct SyncData {
 
  - macOS 和 iOS 都提供了基础的互斥锁。Foundation 框架定义了几种用于特别场景的互斥锁作为补充
 
-  - ##### [POSIX][POSIX线程] 互斥锁
+##### [POSIX][POSIX线程] 互斥锁
 
-    pthread 表示 POSIX thread，定义了一组跨平台的线程相关的 API
+pthread 表示 POSIX thread，定义了一组跨平台的线程相关的 API
 
-    常见用法：
-    ```Objective-C
-    #import <pthread.h>
-    pthread_mutexattr_t attr;
-    pthread_mutexattr_init(&attr);
-    pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_NORMAL);  // 定义锁的属性
+常见用法：
+```Objective-C
+#import <pthread.h>
+pthread_mutexattr_t attr;
+pthread_mutexattr_init(&attr);
+pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_NORMAL);  // 定义锁的属性
 
-    pthread_mutex_t mutex;
-    pthread_mutex_init(&mutex, &attr); // 创建锁
+pthread_mutex_t mutex;
+pthread_mutex_init(&mutex, &attr); // 创建锁
 
-    pthread_mutex_lock(&mutex); // 申请锁
-    // 临界区
-    pthread_mutex_unlock(&mutex); // 释放锁
-    ```
+pthread_mutex_lock(&mutex); // 申请锁
+// 临界区
+pthread_mutex_unlock(&mutex); // 释放锁
+```
 
-  - ##### Cocoa 中基本的互斥锁 NSLock
+##### Cocoa 中基本的互斥锁 NSLock
 
-    - NSLock 只是在内部封装了一个 pthread_mutex，属性为 PTHREAD_MUTEX_ERRORCHECK;
-    - NSLock 的所有锁的接口实际上都由 NSLocking 协议定义，也就是 lock 和 unlock 这俩方法，对应功能是获取和释放锁。
+- NSLock 只是在内部封装了一个 pthread_mutex，属性为 PTHREAD_MUTEX_ERRORCHECK;
+- NSLock 的所有锁的接口实际上都由 NSLocking 协议定义，也就是 lock 和 unlock 这俩方法，对应功能是获取和释放锁。
 
-      常见用法：
-      ```Objective-C
-      [_lock lock];
-      // 临界区
-      [_lock unlock];
-      ```
-    - NSLock 类还提供了 tryLock 和 lockBeforeDate: 方法
-      - tryLock 方法尝试获取锁，但如果锁不可用，并不会阻塞，只是返回 NO 而已;
-      - lockBeforeDate: 方法尝试获取锁，并一直阻塞线程，直到获取到锁（返回 YES）或达到限定的时间（返回 NO）。
+  常见用法：
+  ```Objective-C
+  [_lock lock];
+  // 临界区
+  [_lock unlock];
+  ```
+- NSLock 类还提供了 tryLock 和 lockBeforeDate: 方法
+  - tryLock 方法尝试获取锁，但如果锁不可用，并不会阻塞，只是返回 NO 而已;
+  - lockBeforeDate: 方法尝试获取锁，并一直阻塞线程，直到获取到锁（返回 YES）或达到限定的时间（返回 NO）。
 
-  - ##### @synchronized
+##### [@synchronized][@synchronized]
 
 
 #### 递归锁
@@ -464,6 +464,7 @@ dispatch_async(async_queue, block5);
 
 
 
+[@synchronized]: https://github.com/HaiTeng-Wang/Book/blob/master/iOS中的锁.md#synchronized
 [iOS 的多线程同步]: https://blog.zorro.im/posts/ios-muti-threading-synchronization.html
 [生产者消费者问题]: https://zh.wikipedia.org/wiki/%E7%94%9F%E4%BA%A7%E8%80%85%E6%B6%88%E8%B4%B9%E8%80%85%E9%97%AE%E9%A2%98
 [BD读写锁]: https://baike.baidu.com/item/%E8%AF%BB%E5%86%99%E9%94%81

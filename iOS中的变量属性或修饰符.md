@@ -23,7 +23,7 @@
 ## 01 `atomic`
 
 - 默认行为；
-- 为确保其原子性(可理解为：多个操作 不可被打乱或切割)，使用锁定机制给setter/getter上锁(@synchronized)，来使得变量值更具安全性；
+- 为确保其原子性(可理解为：多个操作 不可被打乱或切割)，使用锁定机制给setter/getter上锁([@synchronized][@synchronized])，来使得变量值更具安全性；
 - 但是性能低；
 - 保证系统生成setter/getter操作完整性，不受其它线程影响。但是并不是真正的多线程访问安全。
 
@@ -245,5 +245,6 @@ OBJECTIVE-C AUTOMATIC REFERENCE COUNTING (ARC)](https://clang.llvm.org/docs/Auto
 ](https://stackoverflow.com/questions/9262535/explanation-of-strong-and-weak-storage-in-ios5)
 
 
+[@synchronized]: https://github.com/HaiTeng-Wang/Book/blob/master/iOS中的锁.md#synchronized
 [1]: https://gitee.com/Ccfax/HunterPrivateImages/raw/master/delegateRetainCycles.png
 [2]: https://gitee.com/Ccfax/HunterPrivateImages/raw/master/delegateRetainCycles2.png
