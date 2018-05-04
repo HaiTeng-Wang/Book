@@ -16,15 +16,16 @@
 - @synchronized慢，但@synchronized和其他同步锁的性能相比并没有很夸张，对于使用者来说几乎忽略不计；
 - 你调用 sychronized 的每个对象，Objective-C runtime 都会为其分配一个锁pthread_mutex（pthread_mutex锁的属性类型为PTHREAD_MUTEX_RECURSIVE支持递归）并存储在哈希表中。传入的object的内存地址，被用作key，通过一个哈希算法将映射到数组上的一个下标。
 - Using the @synchronized Directive
+
   ```Objective-C
-  - (void)myMethod:(id)anObj
-  {
-      @synchronized(anObj)
-      {
-          // Everything between the braces is protected by the @synchronized directive.
-      }
-  }
-```
+    - (void)myMethod:(id)anObj
+    {
+        @synchronized(anObj)
+        {
+            // Everything between the braces is protected by the @synchronized directive.
+        }
+    }
+  ```
 
 #### 锁是如何与你传入 @synchronized 的对象关联上的？
 
@@ -32,7 +33,8 @@
 
 调用 objc_sync_enter(obj) 时，它用 obj 内存地址的哈希值查找合适的 SyncData，然后将其上锁。当你调用 objc_sync_exit(obj) 时，它查找合适的 SyncData 并将其解锁。
 
-[objc-sync源码]
+[objc-sync源码][objc-sync源码]
+
 ```Objective-C
 typedef struct SyncData {
     id object;  // 我们给 @synchronized 传入的那个对象
@@ -137,10 +139,10 @@ typedef struct SyncData {
 [生产者消费者问题][生产者消费者问题]
 
 > - 也称有限缓冲问题（英语：Bounded-buffer problem），是一个多线程同步问题的经典案例;
-- 该问题描述了共享固定大小缓冲区的两个线程——即所谓的“生产者”和“消费者”——在实际运行时会发生的问题;
-- 生产者的主要作用是生成一定量的数据放到缓冲区中，然后重复此过程;
-- 与此同时，消费者也在缓冲区消耗这些数据;
-- 该问题的关键就是要保证生产者不会在缓冲区满时加入数据，消费者也不会在缓冲区中空时消耗数据。
+> - 该问题描述了共享固定大小缓冲区的两个线程——即所谓的“生产者”和“消费者”——在实际运行时会发生的问题;
+> - 生产者的主要作用是生成一定量的数据放到缓冲区中，然后重复此过程;
+> - 与此同时，消费者也在缓冲区消耗这些数据;
+> - 该问题的关键就是要保证生产者不会在缓冲区满时加入数据，消费者也不会在缓冲区中空时消耗数据。
 
 条件锁主要为了解决生产者消费者问题：
 - 它可以让一个线程等待某一条件，当条件满足时，会收到通知;
@@ -290,9 +292,9 @@ dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
 
 Read-write lock
 > - 如果对一个临界区大部分是读操作而只有少量的写操作，在大规模操作上应用读写锁可以显著降低线程互斥产生的代价。
-- 正常操作数据时，可以同时有多个读操作。线程想要做写操作时，需要等到所有的读操作完成并释放锁之后，然后写操作会获取锁并更新数据。
-- 在写操作线程阻塞等待锁被释放时，新来的读操作线程在写操作完成前会一直阻塞。
-- iOS系统只支持 POSIX 线程中使用读写锁
+> - 正常操作数据时，可以同时有多个读操作。线程想要做写操作时，需要等到所有的读操作完成并释放锁之后，然后写操作会获取锁并更新数据。
+> - 在写操作线程阻塞等待锁被释放时，新来的读操作线程在写操作完成前会一直阻塞。
+> - iOS系统只支持 POSIX 线程中使用读写锁
 
 创建和关闭方法如下：
 ```Objective-C
@@ -353,25 +355,27 @@ do {
 
  - os_unfair_lock
    ```Objective-C
-   #import <os/lock.h>
-
-  // 初始化
-  os_unfair_lock_t unfairLock = &(OS_UNFAIR_LOCK_INIT);
-  // 加锁
-  os_unfair_lock_lock(unfairLock);
-  // 解锁
-  os_unfair_lock_unlock(unfairLock);
-  // 尝试加锁
-  BOOL b = os_unfair_lock_trylock(unfairLock);
+    #import <os/lock.h>
+    // 初始化
+    os_unfair_lock_t unfairLock = &(OS_UNFAIR_LOCK_INIT);
+    // 加锁
+    os_unfair_lock_lock(unfairLock);
+    // 解锁
+    os_unfair_lock_unlock(unfairLock);
+    // 尝试加锁
+    BOOL b = os_unfair_lock_trylock(unfairLock);
    ```
 
 #### [信号量][百度百科信号量]
+
 通过控制**信号量**，我们可以控制能够同时进行的**并发数**
+
 - 多个线程要访问同一个资源的时候，往往会设置一个信号量，当信号量大于0的时候，新的线程可以去操作这个资源
 - 操作时信号量-1，操作完后信号量+1
 - 信号量等于0的时候，必须等待
 
 POSIX 提供的相关函数如下：
+
 ```
 sem_init 初始化
 sem_post 给信号量的值加一（V 操作）
@@ -381,6 +385,7 @@ sem_destroy 销毁
 ```
 
 iOS利用GCD信号量dispatch_semaphore控制并发
+
 ```Objective-C
  // 创建信号量。参数：信号量的初值，如果小于0则会返回NULL
  dispatch_semaphore_t semaphore = dispatch_semaphore_create(1);
