@@ -2,15 +2,15 @@
 
 参考：
 
-> [官方文档](https://developer.apple.com/library/mac/documentation/Cocoa/Conceptual/Multithreading/RunLoopManagement/RunLoopManagement.html)
-| [中文翻译](https://wenku.baidu.com/view/97d92788cc22bcd126ff0c3f.html)
-|[开源地址](https://opensource.apple.com/source/CF/CF-1151.16/)
+> [官方文档][官方文档]
+| [中文翻译][中文翻译]
+|[开源地址][开源地址]
 
-> [孙源的Runloop分享](https://pan.baidu.com/s/1o8dW0NS#list/path=%2F)
+> [孙源的Runloop分享][孙源的Runloop分享]
 
-> [深入理解RunLoop](https://blog.ibireme.com/2015/05/18/runloop/)
+> [深入理解RunLoop][深入理解RunLoop]
 
-> [RunLoop 总结及应用](http://www.cnblogs.com/junhuawang/p/6437577.html)
+> [RunLoop 总结及应用][RunLoop 总结及应用]
 
 阅读时间：15分钟
 
@@ -65,3 +65,11 @@
     在一个子线程里发起一个NSURLConnection网络数据请求，但是NSURLConnection的delegate没有回调
 
     在主线程环境下，方法体第一行调用performSelector:withObject:afterDelay:这种带afterDelay的方法簇时，这一次调用的实际执行时机往往是在方法体的最后执行，如下代码示例：
+
+
+[官方文档]: https://developer.apple.com/library/mac/documentation/Cocoa/Conceptual/Multithreading/RunLoopManagement/RunLoopManagement.html
+[中文翻译]: https://wenku.baidu.com/view/97d92788cc22bcd126ff0c3f.html
+[开源地址]: https://opensource.apple.com/source/CF/CF-1151.16/
+[孙源的Runloop分享]: https://pan.baidu.com/s/1o8dW0NS#list/path=%2F
+[深入理解RunLoop]: https://blog.ibireme.com/2015/05/18/runloop/
+[RunLoop 总结及应用]: http://www.cnblogs.com/junhuawang/p/6437577.html
