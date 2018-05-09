@@ -15,5 +15,5 @@
 ---
 
 
-[一颗SoC]: https://github.com/HaiTeng-Wang/Book/blob/master/一颗SoC【知识科普】.md
-[objc-weak]: https://github.com/HaiTeng-Wang/Book/blob/master/objc-weak【知识科普】.md
+[一颗SoC]: https://github.com/HaiTeng-Wang/Book/blob/master/知识科普/一颗SoC【知识科普】.md
+[objc-weak]: https://github.com/HaiTeng-Wang/Book/blob/master/知识科普/objc-weak【知识科普】.md
