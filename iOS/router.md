@@ -367,7 +367,7 @@ value：
 [MGJRouter]: https://github.com/meili/MGJRouter
 [JLRoutes]: https://github.com/joeldev/JLRoutes/blob/master/JLRoutes/JLRoutes.m
 [蘑菇街 App 的组件化之路]: http://limboy.me/tech/2016/03/10/mgj-components.html
-[JLRoutes中文文档]: http://limboy.me/tech/2016/03/10/mgj-components.html
+[JLRoutes中文文档]: https://github.com/HaiTeng-Wang/Book/blob/master/iOS/JLRoutes中文文档.md
 
 [Demo]: https://github.com/HaiTeng-Wang/iOSFrameworkDemo
 [AppRouter.png]: https://gitee.com/Ccfax/HunterPrivateImages/raw/master/AppRouter.png
