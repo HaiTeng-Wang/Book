@@ -24,7 +24,7 @@
 ---
 
 
-[快速回顾Runtime]: https://github.com/HaiTeng-Wang/Book/blob/master/快速回顾Runtime.md
+[快速回顾Runtime]: https://github.com/HaiTeng-Wang/Book/blob/master/iOS/快速回顾Runtime.md
 [iOS中的变量属性或修饰符]: https://github.com/HaiTeng-Wang/Book/blob/master/iOS/iOS中的变量属性或修饰符.md
 [@property内存语义修饰符Copy]: https://github.com/HaiTeng-Wang/Book/blob/master/iOS/%40property内存语义修饰符Copy.md
 [iOS中的锁]: https://github.com/HaiTeng-Wang/Book/blob/master/iOS/iOS中的锁.md
