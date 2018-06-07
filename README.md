@@ -10,6 +10,13 @@
 - [@property内存语义修饰符Copy][@property内存语义修饰符Copy]
 - [iOS中的锁][iOS中的锁]
 - [iOS - Router][iOSRouter]
+- [iOS 静态库 动态库][iOS 静态库 动态库]
+
+#### 性能监测
+- [启动时间][启动时间]
+- [ ] 内存
+- [ ] FPS
+- [ ] Crashes
 
 #### 开发中遇到的问题:
 - [iOS 异步请求等待传值][iOS 异步请求等待传值]
@@ -29,6 +36,12 @@
 [@property内存语义修饰符Copy]: https://github.com/HaiTeng-Wang/Book/blob/master/iOS/%40property内存语义修饰符Copy.md
 [iOS中的锁]: https://github.com/HaiTeng-Wang/Book/blob/master/iOS/iOS中的锁.md
 [iOSRouter]: https://github.com/HaiTeng-Wang/Book/blob/master/iOS/router.md
+[iOS 静态库 动态库]: https://github.com/HaiTeng-Wang/Book/blob/master/iOS/iOS%20静态库%20动态库.md
+
+[启动时间]: https://github.com/HaiTeng-Wang/Book/blob/master/iOS/App性能监测/监测App启动时间.md
+[内存]: https://github.com/HaiTeng-Wang/Book/blob/master/iOS/App性能监测/监测App内存.md
+[FPS]: https://github.com/HaiTeng-Wang/Book/blob/master/iOS/App性能监测/监测App界面流畅度.md
+[Crashes]: https://github.com/HaiTeng-Wang/Book/blob/master/iOS/App性能监测/监测App闪退.md
 
 [iOS 异步请求等待传值]: https://github.com/HaiTeng-Wang/Book/blob/master/iOS/iOS%20异步请求等待传值.md
 [问题1]: https://github.com/HaiTeng-Wang/Book/blob/master/iOS/问题.md#通过蒲公英下载的app收不到推送消息
