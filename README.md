@@ -14,7 +14,7 @@
 
 #### 性能监测
 - [启动时间][启动时间]
-- [ ] 内存
+- [界面流畅度][界面流畅度]
 - [ ] FPS
 - [ ] Crashes
 
@@ -40,7 +40,7 @@
 
 [启动时间]: https://github.com/HaiTeng-Wang/Book/blob/master/iOS/App性能监测/监测App启动时间.md
 [内存]: https://github.com/HaiTeng-Wang/Book/blob/master/iOS/App性能监测/监测App内存.md
-[FPS]: https://github.com/HaiTeng-Wang/Book/blob/master/iOS/App性能监测/监测App界面流畅度.md
+[界面流畅度]: https://github.com/HaiTeng-Wang/Book/blob/master/iOS/App性能监测/监测App界面流畅度.md
 [Crashes]: https://github.com/HaiTeng-Wang/Book/blob/master/iOS/App性能监测/监测App闪退.md
 
 [iOS 异步请求等待传值]: https://github.com/HaiTeng-Wang/Book/blob/master/iOS/iOS%20异步请求等待传值.md
