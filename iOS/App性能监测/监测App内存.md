@@ -38,38 +38,27 @@
 
 通过上面的连接，对手机存储器RAM、ROM以及App运行中的内存分配有了一定的了解。
 
-
 iPhone所有机型RAM，ROM（下表统计数据非官方，仅供参考）
 
-| 手机型号        | RAM(运存)   |  ROM(容量)  |
-| --------   | -----:  | :----:  |
-| iPhone3G    | 128M |   8G/16G    |
-| iPhone3GS        |   256M    |   	8G/16G/32G   |
-| iPhone4        |   512M	    |   	8G/16G/32G
-   |
-| iPhone4S       |   512M    |   	16G/32G/64G
-   |
-| iPhone5        |   1G    |   	16G/32G/64G
-   |
-| iPhone5S       |   1G    |   	16G/32G/64G
-   |
-| iPhone5C        |   1G    |   	8G/16G/32G
-   |
-| iPhone6        |   1G    |   	16G/64G/128G
-   |
-| iPhone6P        |   1G    |   	16G/64G/128G
-   |
-| iPhone6S        |   2G    |   	16G/32G/64G/128G
-   |
-| iPhone6SP        |   2G    |   	16G/64G/128G
-   |
-| iPhone7        |   2G    |   	32G/128G/256G
-   |
-| iPhone7P        |   3G    |   	32G/128G/256G   |
-| iPhoneSE        |   2G    |   	16G/32G/64G/128G |
-| iPhone8        |   2G    |   	64G/256G |
-| iPhone8P        |   3G    |   	64G/256G |
-| iPhone X        |   3G    |   	64G/256G |
+| 手机型号        | RAM(运存)   |  ROM(容量)   |
+| --------       | -----:     | :----:      |
+| iPhone3G       | 128M       |   8G/16G    |
+| iPhone3GS      |   256M     |  8G/16G/32G |
+| iPhone4        |   512M	    |  8G/16G/32G |
+| iPhone4S       |   512M     |  16G/32G/64G|
+| iPhone5        |   1G       |  16G/32G/64G|
+| iPhone5S       |   1G       |  16G/32G/64G|
+| iPhone5C       |   1G       |  	8G/16G/32G|
+| iPhone6        |   1G       |  16G/64G/128G|
+| iPhone6P       |   1G       |  16G/64G/128G|
+| iPhone6S       |   2G       | 16G/32G/64G/128G|
+| iPhone6SP      |   2G       |  16G/64G/128G|
+| iPhone7        |   2G       |  32G/128G/256G|
+| iPhone7P       |   3G       |   	32G/128G/256G|
+| iPhoneSE       |   2G       |   	16G/32G/64G/128G|
+| iPhone8        |   2G       |   	64G/256G |
+| iPhone8P       |   3G       |   	64G/256G |
+| iPhone X       |   3G       |   	64G/256G |
 
 1GB = 10 亿字节；实际可用容量会由于诸多因素而减少并有所差异。以iPhoneX为例，单击[此处][ht208119]了解实际可用容量详情。
 
