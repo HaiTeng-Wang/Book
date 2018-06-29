@@ -7,7 +7,7 @@
 
 - #### [FPS][FPS]
 
-  经过开发者们的测试度量，**iOS系统中正常的屏幕刷新率为60Hz（60次每秒）。**为了证实这一点，我开启了一个新工程使用CADisplayLink进行测试，确实如此。
+  经过开发者们的测试度量，**iOS系统中正常的屏幕刷新率为60Hz（60次每秒）。** 为了证实这一点，我开启了一个新工程使用CADisplayLink进行测试，确实如此。
 
   帧率越高意味着界面越流畅。
 
@@ -61,20 +61,19 @@
 - #### RunloopObserver
 
   开辟一个子线程来监控主线程的 RunLoop，当两个状态(BeforeSources和AfterWaiting)区域之间的耗时大于阈值时，就记为发生一次卡顿。此时获取调用堆栈。
+  
+  [腾讯Bugly使用这种方式检测页面卡顿信息。][buglyfaq-ios]
 
 ### 我的方案
 
-“过早的优化是万恶之源”，在需求未定，性能问题不明显时，没必要尝试做优化，而要尽量正确的实现功能。
+在DUBG模式下，我采用一个明确的 [PFPSStatus][PFPSStatus] 指示器来监测页面卡顿，使用Time Profile找出耗时方法。
 
-在考虑投入产出比之后，生产环境未实现监测。
-
-在DUBG模式下，我采用一个明确的 FPS 指示器来监测页面卡顿，使用Time Profile找出耗时方法。
-
-FPS 指示器，我使用的是[PFPSStatus][PFPSStatus]。
-
+生产环境使用[bugly][bugly]做检测统计。
 
 [iOS-Performance-Optimization]: https://github.com/skyming/iOS-Performance-Optimization#卡顿优化
 [FPS]: https://baike.baidu.com/item/fps/3227416
 [cadisplaylink]: https://developer.apple.com/documentation/quartzcore/cadisplaylink?changes=_8
 [屏幕显示图像的原理]: https://blog.ibireme.com/2015/11/12/smooth_user_interfaces_for_ios/
 [PFPSStatus]: https://github.com/joggerplus/JPFPSStatus
+[buglyfaq-ios]: https://bugly.qq.com/docs/user-guide/faq-ios/?v=20170912151050#2
+[bugly]: https://bugly.qq.com/v2/index
