@@ -21,6 +21,7 @@
 #### 开发中遇到的问题:
 - [iOS 异步请求等待传值][iOS 异步请求等待传值]
 - [通过蒲公英下载的App，收不到推送消息？][问题1]
+- [“加油站”1.0版本，问题记录][加油站1.0版本记录]
 
 ---
 
@@ -45,6 +46,7 @@
 
 [iOS 异步请求等待传值]: https://github.com/HaiTeng-Wang/Book/blob/master/iOS/iOS%20异步请求等待传值.md
 [问题1]: https://github.com/HaiTeng-Wang/Book/blob/master/iOS/问题.md#通过蒲公英下载的app收不到推送消息
+[加油站1.0版本记录]: https://github.com/HaiTeng-Wang/Book/blob/master/iOS/加油站1.0版本记录.md
 
 [知识科普]: https://github.com/HaiTeng-Wang/Book/blob/master/知识科普/知识科普README.md
 [一颗SoC]: https://github.com/HaiTeng-Wang/Book/blob/master/知识科普/一颗SoC【知识科普】.md
