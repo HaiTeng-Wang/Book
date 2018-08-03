@@ -20,9 +20,9 @@ iMessage是苹果设备（iPad、iPhone、iPod touch）自带的免费信息发�
 
 [这里][怎样实现iMessage群发]有篇文章可供参考。
 
-我并未深入进行尝试，也没有实现大批量群发。只是通过AppleScript脚本控制iMessage客户端发送给少量人。
+我并未深入进行尝试，也没有实现大批量群发。只是通过AppleScript脚本控制Messages客户端进行小批量群发。
 #### 发送iMessage的AppleScript代码
-将电话号以`.csv`文件的格式存储，通过脚本进行读取发送。
+将电话号以`,`分割存储在`.csv`文件中，通过脚本进行读取发送。
 ```javasCript
 tell application "Messages"
 	set csvData to read "/Users/xxx/Desktop/test.csv"
