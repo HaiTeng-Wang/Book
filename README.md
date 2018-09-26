@@ -28,6 +28,7 @@
 ## 魔鬼提升日记
 
 - [开篇，魔鬼提升法][魔鬼提升法]
+- [6天后，算法基础][算法基础]
 
 ## [知识科普][知识科普]
 - [一颗SoC][一颗SoC]
@@ -59,3 +60,4 @@
 [iMessages群发调研记录]: https://github.com/HaiTeng-Wang/Book/blob/master/知识科普/iMessages群发调研记录.md
 
 [魔鬼提升法]: https://github.com/HaiTeng-Wang/Book/blob/master/魔鬼训练日记/魔鬼提升法.md
+[算法基础]: https://github.com/HaiTeng-Wang/Book/blob/master/魔鬼训练日记/算法基础.md
