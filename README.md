@@ -25,6 +25,10 @@
 
 ---
 
+## 魔鬼提升日记
+
+- [开篇，魔鬼提升法][魔鬼提升法]
+
 ## [知识科普][知识科普]
 - [一颗SoC][一颗SoC]
 - [objc-weak][objc-weak]
@@ -53,3 +57,5 @@
 [一颗SoC]: https://github.com/HaiTeng-Wang/Book/blob/master/知识科普/一颗SoC【知识科普】.md
 [objc-weak]: https://github.com/HaiTeng-Wang/Book/blob/master/知识科普/objc-weak【知识科普】.md
 [iMessages群发调研记录]: https://github.com/HaiTeng-Wang/Book/blob/master/知识科普/iMessages群发调研记录.md
+
+[魔鬼提升法]: https://github.com/HaiTeng-Wang/Book/blob/master/魔鬼训练日记/魔鬼提升法.md
