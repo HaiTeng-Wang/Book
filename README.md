@@ -28,8 +28,8 @@
 ## 魔鬼提升日记
 
 - [开篇，魔鬼提升法][魔鬼提升法]
-- [魔鬼提升法，进行第6天 - 算法基础][算法基础]
-- [魔鬼提升法，进行第13天 - 读《iOS面试之道》完][算法基础]
+- [魔鬼提升法，进行第6天 - 算法基础][魔鬼提升法第6天]
+- [魔鬼提升法，进行第13天 - 读《iOS面试之道》完][魔鬼提升法第13天]
 
 ## [知识科普][知识科普]
 - [一颗SoC][一颗SoC]
@@ -61,4 +61,5 @@
 [iMessages群发调研记录]: https://github.com/HaiTeng-Wang/Book/blob/master/知识科普/iMessages群发调研记录.md
 
 [魔鬼提升法]: https://github.com/HaiTeng-Wang/Book/blob/master/魔鬼训练日记/魔鬼提升法.md
-[算法基础]: https://github.com/HaiTeng-Wang/Book/blob/master/魔鬼训练日记/算法基础.md
+[魔鬼提升法第6天]: https://github.com/HaiTeng-Wang/Book/blob/master/魔鬼训练日记/魔鬼提升法，进行第6天%20-%20算法基础.md
+[魔鬼提升法第13天]: https://github.com/HaiTeng-Wang/Book/blob/master/魔鬼训练日记/魔鬼提升法，进行第13天%20-%20读《iOS面试之道》完.md
