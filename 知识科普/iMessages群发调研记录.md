@@ -69,6 +69,14 @@ end repeat
 end tell
 ```
 
+如果遇到以下错误
+```
+“iMessage遇到一个错误：不能获得“buddy id "C0B35E7F-A0FB-49E1-BDD7-C867BC06D920:+86136xxxx0000"”
+```
+1. 检查下iMessage是否登陆。
+2. 使用iMessage发送一条消息之后，再使用脚本发送。
+
+
 ##### Script Editor示例截图:
 ![Messages轰炸截图.png]
 
