@@ -139,4 +139,4 @@ dispatch_async(dispatch_get_main_queue(), ^{
 [AfterMainFromIPhone.png]: https://gitee.com/Ccfax/HunterPrivateImages/raw/master/AfterMainFromIPhone.png
 [Config-dSYM]: https://gitee.com/Ccfax/HunterPrivateImages/raw/master/Config-dSYM.png
 [Instrument-TimeProfiler]: https://developer.apple.com/library/archive/documentation/DeveloperTools/Conceptual/InstrumentsUserGuide/Instrument-TimeProfiler.html
-[TimeProfileTest.gif]: https://gitee.com/Ccfax/HunterPrivateImages/raw/master/TimeProfileTest.gif
+[TimeProfileTest.gif]: https://github.com/HaiTeng-Wang/Book/blob/master/iOS/App%E6%80%A7%E8%83%BD%E7%9B%91%E6%B5%8B/TimeProfileTest.gif
