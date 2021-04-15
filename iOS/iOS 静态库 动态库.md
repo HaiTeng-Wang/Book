@@ -11,9 +11,9 @@
 库从本质上来说是一种可执行代码的二进制格式，可以被载入内存中执行。
 库分静态库和动态库两种。
 
-在探索之前，先大致了解程序下编译过程
+在探索之前，先大致了解下程序编译过程
 
-![编译过程](/assets/编译过程_84o3740we.png)
+![编译过程](/assets/编译过程.png)
 
 ### 静态库
 
@@ -21,7 +21,7 @@ iOS中的静态库有 .a 和 .framework两种形式；
 
 **链接时**完整地将目标文件.o拷贝至可执行文件中，被多次使用就有多份冗余拷贝。
 
-![staticLibraries.png]
+![staticLibraries](/assets/staticLibraries.png)
 
 ### 动态库
 
@@ -29,7 +29,7 @@ iOS中的动态库有.dylib 和 .framework 形式，后来.dylib动态库又被�
 
 链接时不复制，目标程序中只会存储指向动态库的引用。程序运行时由系统动态加载到内存，供程序调用，系统只加载一次，多个程序共用，节省内存。
 
-![dynamicLibraries.png]
+![dynamicLibraries](/assets/dynamicLibraries.png)
 
 ![动态库&静态库](/assets/动态库&静态库.png)
 
@@ -44,9 +44,9 @@ iOS中的动态库有.dylib 和 .framework 形式，后来.dylib动态库又被�
 ---
 ### 静态库与动态库体积对比
 
-![](https://gitee.com/Ccfax/HunterPrivateImages/raw/master/AFN静态库示例图.png)
+![AFN静态库示例图](/assets/AFN静态库示例图.png)
 
-![](https://gitee.com/Ccfax/HunterPrivateImages/raw/master/AFN动态库示例图.png)
+![AFN动态库示例图](/assets/AFN动态库示例图.png)
 
 单纯的体积对比，静态库体积要比动态库大。静态库是`.o`文件的集合，每个文件都包含`Mach header，segment, section`因此会产生冗余。
 
@@ -58,5 +58,3 @@ iOS中的动态库有.dylib 和 .framework 形式，后来.dylib动态库又被�
 [stackoverflow]: https://stackoverflow.com/questions/15331056/library-static-dynamic-or-framework-project-inside-another-project
 [iOS 静态库，动态库与 Framework]: https://segmentfault.com/a/1190000004920754
 [iOS里的动态库和静态库]: https://www.zybuluo.com/qidiandasheng/note/603907
-[dynamicLibraries.png]: https://gitee.com/Ccfax/HunterPrivateImages/raw/master/dynamicLibraries.png
-[staticLibraries.png]: https://gitee.com/Ccfax/HunterPrivateImages/raw/master/staticLibraries.png
