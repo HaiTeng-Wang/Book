@@ -169,3 +169,12 @@ self.nickName = @"被观察值被修改";
 ```objective-c
 [self.person removeObserver:self forKeyPath:@"nickName"];
 ```
+
+---
+
+官方文档：https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/KeyValueObserving/KeyValueObserving.html#//apple_ref/doc/uid/10000177-BCICJDHA
+
+写的不错的文章：
+- [iOS KVO 官方文档《Key-Value Observing Programming Guide》中文翻译](https://www.mdeditor.tw/pl/grHm)
+
+- [iOS Objective-C KVO 详解](https://www.jianshu.com/p/3e12f28baaff)
