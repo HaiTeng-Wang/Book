@@ -206,7 +206,7 @@ iOS4 = unsafe_unretained
 
     没有使用__block修饰的变量，实际是在申明 block 时，是被复制到 block_impl_0 结构体中。因为这样，在 block 内部修改变量的内容，不会影响外部的实际变量。
 
-    (对于这个问题，我参考的是唐巧大大的博文[谈Objective-C block的实现](https://blog.devtang.com/2013/07/28/a-look-inside-blocks/)。我们看不到源代码，官方也没有明确说明。很多东西也都是猜测，推理。所以挖太深也真的是头疼！)
+    (对于这个问题，我参考的是唐巧大大的博文[谈Objective-C block的实现](https://blog.devtang.com/2013/07/28/a-look-inside-blocks/))
 
 
 - 题外话：须知道static的变量和全局变量不需要加__block就可以在Block中修改。
@@ -222,7 +222,7 @@ iOS4 = unsafe_unretained
 
 关于“桥接修饰符”，以及以上三个话题。部分参考这篇文章【[iOS开发ARC内存管理技术要点](https://www.cnblogs.com/flyFreeZn/p/4264220.html)】作者写于15年。
 
-【[Objective-C 内存管理——你需要知道的一切]()】这篇文章对OC内存管理方面总结的不错。
+【[Objective-C 内存管理——你需要知道的一切](https://www.open-open.com/lib/view/open1460693431491.html)】这篇文章对OC内存管理方面总结的不错。
 
 ---
 #### Reference：
