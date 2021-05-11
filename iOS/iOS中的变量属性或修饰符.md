@@ -141,7 +141,7 @@ iOS4 = unsafe_unretained
   ```
 
 
-## 10. [copy](https://github.com/HaiTeng-Wang/Book/blob/master/%40property内存语义修饰符Copy.md)
+## 10. [copy](https://github.com/HaiTeng-Wang/Book/blob/master/iOS/%40property%E5%86%85%E5%AD%98%E8%AF%AD%E4%B9%89%E4%BF%AE%E9%A5%B0%E7%AC%A6Copy.md)
 
 ---
 
