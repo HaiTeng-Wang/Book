@@ -7,7 +7,7 @@
 
 > [Objective-C 消息发送与转发机制原理](http://yulingtianxia.com/blog/2016/06/15/Objective-C-Message-Sending-and-Forwarding/)
 
-> [Runtime全方位装逼指南](http://ios.jobbole.com/85092/)
+> [Runtime全方位装逼指南](https://zhuanlan.zhihu.com/p/21304667?refer=lishichao)
 
 
 建议阅读时间： 15分钟
@@ -269,3 +269,73 @@ IMP参数包含 id 和 SEL 类型。通过一组 id 和 SEL 参数就能确定�
     }
     @end
     ```
+
+    ---
+
+#### 拓展：
+
+##### 1、[`swift`有`runtime`机制吗?](http://mp.weixin.qq.com/s?__biz=MzA3ODg4MDk0Ng==&mid=403153173&idx=1&sn=c631f95b28a0eb4b842a9494e43a30e5&scene=23&srcid=0331ZwO8t6uWiBON621r1GhC#rd)
+
+纯Swift类没有动态性，但在方法、属性前添加dynamic修饰可以获得动态性。
+
+继承自NSObject的Swift类，其继承自父类的方法具有动态性，其他自定义方法、属性需要加dynamic修饰才可以获得动态性。
+
+若方法的参数、属性类型为Swift特有、无法映射到Objective-C的类型(如Character、Tuple)，则此方法、属性无法添加dynamic修饰（会编译错误）
+
+Swift类在Objective-C中会有模块前缀
+
+
+##### 2、[`OC`中可以给空对象发送消息吗？](http://lib.csdn.net/article/objective-c/56093)、[Sending a message to nil in Objective-C](https://stackoverflow.com/questions/156395/sending-a-message-to-nil-in-objective-c)
+
+可以给空对象发送消息，程序不会`Crash`。发消息的本质是，`OC`代码在编译时期会转换成`runtime`库中的函数`objc_msgSend`，代码运行时，
+会调用此函数。`OC`在函数调用过程中会做处理，如果`self`为空，那么`selecter`也为空。直接返回，不会做任何事情。
+
+但如果向一个`NSNULL`对象发送消息，会`Crash`。因为`NSNULL`只有一个方法。
+
+向已释放的对象发消息也一定`Crash`。
+
+##### 3、关于`nil`、`Nil`、`NULL`、`NSNULL`
+> 参考：
+
+> [nil / Nil / NULL / NSNull](http://nshipster.cn/nil/)、
+
+> [Difference between nil, NIL and, null in Objective-C
+](https://stackoverflow.com/questions/5908936/difference-between-nil-nil-and-null-in-objective-c)
+
+| 标志        | 值   |  含义  |
+| --------   | -----  | ----  |
+| NULL     | (void *)0|   C指针的字面零值    |
+| nil        | (id)0 |   Objective-C对象的字面零值   |
+| Nil        |  (Class)0  |  Objective-C类的字面零值  |
+| NSNULL        |   [NSNull null]   |  用来表示零值的单独的对象 |
+
+例子：
+`nil`:
+```objective-c
+NSString *someString = nil;
+NSURL *someURL = nil;
+id someObject = nil;
+
+if (anotherObject == nil) // do something
+```
+
+`Nil`:
+```objective-c
+  Class someClass = Nil;
+  Class anotherClass = [NSString class];
+```
+
+`NULL`:
+```objective-c
+  int *pointerToInt = NULL;
+  char *pointerToChar = NULL;
+  struct TreeNode *rootNode = NULL;
+```
+
+`NSNULL`:
+
+解决如NSArray和NSDictionary之类的集合不能有nil值的缺陷
+```objective-c
+  NSMutableDictionary *dict = [NSMutableDictionary dictionary];
+  [dict setObject:[NSNull null] forKey:@"someKey"];
+```

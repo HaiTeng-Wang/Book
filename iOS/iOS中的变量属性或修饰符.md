@@ -248,3 +248,100 @@ OBJECTIVE-C AUTOMATIC REFERENCE COUNTING (ARC)](https://clang.llvm.org/docs/Auto
 [@synchronized]: https://github.com/HaiTeng-Wang/Book/blob/master/iOS中的锁.md#synchronized
 [1]: https://gitee.com/Ccfax/HunterPrivateImages/raw/master/delegateRetainCycles.png
 [2]: https://gitee.com/Ccfax/HunterPrivateImages/raw/master/delegateRetainCycles2.png
+
+---
+
+#### 补充：
+
+#### 1. `Member variables`成员变量、`Instance variables`实例变量、`@property属性`、`@synthesize`、`@dynamic`
+> 参考：
+
+> [@property本质是什么？ivar、getter、setter 是如何生成并添加到这个类中的](https://github.com/ChenYilong/iOSInterviewQuestions/blob/master/01%E3%80%8A%E6%8B%9B%E8%81%98%E4%B8%80%E4%B8%AA%E9%9D%A0%E8%B0%B1%E7%9A%84iOS%E3%80%8B%E9%9D%A2%E8%AF%95%E9%A2%98%E5%8F%82%E8%80%83%E7%AD%94%E6%A1%88/%E3%80%8A%E6%8B%9B%E8%81%98%E4%B8%80%E4%B8%AA%E9%9D%A0%E8%B0%B1%E7%9A%84iOS%E3%80%8B%E9%9D%A2%E8%AF%95%E9%A2%98%E5%8F%82%E8%80%83%E7%AD%94%E6%A1%88%EF%BC%88%E4%B8%8A%EF%BC%89.md#6-property-%E7%9A%84%E6%9C%AC%E8%B4%A8%E6%98%AF%E4%BB%80%E4%B9%88ivargettersetter-%E6%98%AF%E5%A6%82%E4%BD%95%E7%94%9F%E6%88%90%E5%B9%B6%E6%B7%BB%E5%8A%A0%E5%88%B0%E8%BF%99%E4%B8%AA%E7%B1%BB%E4%B8%AD%E7%9A%84)
+
+> [@synthesize究竟做什么？](https://codeday.me/bug/20170512/14768.html)
+
+##### 1.1、实例变量(`instance variable`)：
+
+由类定义的实例话的变量（不包括基本数据类型，如`int,double,float`)
+
+##### 1.2、成员变量(`Member variable`)：
+
+代码中的变量，包含实例变量和基本变量类型，无需与外界接触。成员变量默认是`protected`，一般情况下，非子类对象无法访问。（成员变量 = 实例变量 + 基本数据类型变量）
+
+##### 1.3、`@property`：
+
+编译器自动将变量的set和get方法的合成，可用点语法读取，可作为变量使用，可与外界接触。
+
+简单地说：`@property = ivar(成员变量) + getter + setter`;
+
+`property`在`runtime`中是`objc_property_t`定义如下:
+```objective-c
+typedef struct objc_property *objc_property_t;
+```
+而`objc_property`是一个结构体，包括`name`和`attributes`，定义如下：
+```objective-c
+struct property_t {
+const char *name;
+const char *attributes;
+};
+```
+而`attributes`本质是`objc_property_attribute_t`，定义了`property`的一些属性，定义如下：
+```objective-c
+/// Defines a property attribute
+typedef struct {
+const char *name;           /**< The name of the attribute */
+const char *value;          /**< The value of the attribute (usually empty) */
+} objc_property_attribute_t;
+```
+而`attributes`的具体内容包括：类型、原子性、内存语义和对应的实例变量。
+
+例如：定义一个`string`的属性
+```objective-c
+@property (nonatomic, copy) NSString *string;
+```
+通过`property_getAttributes(property)`获取到`attributes`并打印出来之后的结果为`T@”NSString”,C,N,V_string`。
+其中`T`就代表`类型`，`C`就代表`Copy`，`N`代表`nonatomic`，`V`就代表对于的`实例变量`。
+
+定义`property`时，编译器通过“自动合成”(`autosynthesis`)，生成`ivar`、`getter`、`setter`并添加到这个类中。
+
+`@property`有两个对应的词，一个是`@synthesize`，一个是`@dynamic`。如果`@synthesize`和`@dynamic`都没写，那么默认的就是`@syntheszie var = _var`;
+
+##### 1.4、 `@synthesize`
+
+`@synthesize`作用：
+
+若没有手动实现`setter`、`getter`编译器会自动帮我们实现这两个方法。
+
+
+`@synthesize`合成成员变量规则：
+
+- 如果指定了成员变量的名称,会生成一个指定的名称的成员变量
+- 如果这个成员已经存在，就不在生成
+- 如果`@synthesize foo`，会生成一个名字为`foo`的成员变量
+- 如果是`@synthesize foo = _foo;`就不会生成成员变量了.
+
+有了`property`自动合成属性之后，[`@synthesize`使用场景：](https://stackoverflow.com/questions/19784454/when-should-i-use-synthesize-explicitly)
+
+- 指定成员变量名字
+- 同时重写了`setter`和`getter`时
+- 重写了只读属性的`getter`时
+- 使用了`@dynamic`时
+- 在`@protocol`中定义的所有属性
+- 在`category`中定义的所有属性
+- 重载的属性
+
+##### 1.5、`@dynamic`
+
+`@dynamic`作用：告诉编译器，属性的`setter`、`getter`由程序员手动生成，无需自动生成。
+
+#### 2、修饰IBOutlet用Strong还是weak?
+参考：
+> [为什么 iOS 开发中，控件一般为 weak 而不是 strong？](https://www.zhihu.com/question/29927614)
+
+> [修饰 outlet 用 Strong 还是 Weak?](http://sunshineyg888.github.io/2016/03/28/%E4%BF%AE%E9%A5%B0-outlet-%E7%94%A8-Strong-%E8%BF%98%E6%98%AFWeak/)
+
+> [Should IBOutlets be strong or weak under ARC?](https://stackoverflow.com/questions/7678469/should-iboutlets-be-strong-or-weak-under-arc)
+
+##### 一位知乎仁兄真理的回答：
+
+因为控件他爹( view.superview )已经揪着它的小辫了( strong reference )，你( viewController )眼瞅着( weak reference )就好了。当然，如果你想在 view 从 superview 里面 remove 掉之后还继续持有的话，还是要用 strong 的( 你也揪着它的小辫， 这样如果他爹松手了它也跑不了 )。

@@ -170,6 +170,10 @@ self.nickName = @"被观察值被修改";
 [self.person removeObserver:self forKeyPath:@"nickName"];
 ```
 
+### Swift KVO 探讨
+
+TODO:
+
 ---
 
 官方文档：https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/KeyValueObserving/KeyValueObserving.html#//apple_ref/doc/uid/10000177-BCICJDHA

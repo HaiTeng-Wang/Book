@@ -1,3 +1,5 @@
+# Instruments
+
 ## Time Profiler(时间分析器)
 检测应用CPU的使用情况.可以看到应用程序中各个方法正在消耗CPU时间
 
