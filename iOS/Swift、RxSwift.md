@@ -15,11 +15,10 @@
   - [Swift - 内联序列函数sequence介绍（附样例）](https://www.hangge.com/blog/cache/detail_1377.html)
   - [Swift - RxSwift的使用详解5（观察者1： AnyObserver、Binder）](https://www.hangge.com/blog/cache/detail_1941.html)
 
-## 2. RX
+## RxSwift
 
 - [RxSwift: ReactiveX for Swift](https://beeth0ven.github.io/RxSwift-Chinese-Documentation/)
 
-## 3. RX+Swift
 
 ---
 
