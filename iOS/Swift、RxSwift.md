@@ -20,9 +20,7 @@
 - [RxSwift: ReactiveX for Swift](https://beeth0ven.github.io/RxSwift-Chinese-Documentation/)
 
 
----
-
-## 值得注意的小Tips
+## Tips
 
 - ### Swift 与 OC 混编注意事项
    TODO
@@ -44,6 +42,7 @@
 
 - ### [Swift try try! try?使用和区别](https://www.cnblogs.com/Erma-king/p/6755969.html)
 
+---
 
 ## 优秀博主
 
