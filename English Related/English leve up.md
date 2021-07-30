@@ -12,4 +12,3 @@
  - [程序员英语词汇宝典](https://github.com/Wei-Xia/most-frequent-technology-english-words)
 
 
-记得收藏这个repo（公司网络无法star）https://github.com/521xueweihan/HelloGitHub/blob/master/content/64/HelloGitHub64.md
