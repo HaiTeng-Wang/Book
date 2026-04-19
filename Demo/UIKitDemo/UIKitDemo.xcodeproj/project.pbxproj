@@ -31,6 +31,8 @@
 		5A9CCD702E1380BB006B96BA /* HomeViewController+Testing.m in Sources */ = {isa = PBXBuildFile; fileRef = 5A9CCD6F2E1380BB006B96BA /* HomeViewController+Testing.m */; };
 		5A9CCD742E1381EE006B96BA /* HomeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5A9CCD732E1381EE006B96BA /* HomeViewController.m */; };
 		5A9CCD762E138259006B96BA /* HomeViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5A9CCD752E138259006B96BA /* HomeViewController.xib */; };
+		5AB4C30C2E4094DA0021D30E /* WKWebViewVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AB4C30B2E4094DA0021D30E /* WKWebViewVC.swift */; };
+		5AB4C30E2E4095510021D30E /* index.html in Resources */ = {isa = PBXBuildFile; fileRef = 5AB4C30D2E4095510021D30E /* index.html */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -70,6 +72,8 @@
 		5A9CCD732E1381EE006B96BA /* HomeViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HomeViewController.m; sourceTree = "<group>"; };
 		5A9CCD752E138259006B96BA /* HomeViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = HomeViewController.xib; sourceTree = "<group>"; };
 		5A9CCD772E1394DB006B96BA /* UIViewController+HomeViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIViewController+HomeViewController.h"; sourceTree = "<group>"; };
+		5AB4C30B2E4094DA0021D30E /* WKWebViewVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WKWebViewVC.swift; sourceTree = "<group>"; };
+		5AB4C30D2E4095510021D30E /* index.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = index.html; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -105,6 +109,8 @@
 				5A9CCD592E0AA6F9006B96BA /* AppDelegate.swift */,
 				5A9CCD5B2E0AA6F9006B96BA /* SceneDelegate.swift */,
 				5A9CCD5D2E0AA6F9006B96BA /* ViewController.swift */,
+				5AB4C30B2E4094DA0021D30E /* WKWebViewVC.swift */,
+				5AB4C30D2E4095510021D30E /* index.html */,
 				5A089EEA2E1E4CFB005FD0A8 /* CombineTestVc.swift */,
 				5A15ADF82E16686A00A528AD /* CABaseAnimationViewController.h */,
 				5A15ADF92E16686A00A528AD /* CABaseAnimationViewController.m */,
@@ -207,6 +213,7 @@
 				5A9CCD662E0AA6FD006B96BA /* LaunchScreen.storyboard in Resources */,
 				5A9CCD632E0AA6FD006B96BA /* Assets.xcassets in Resources */,
 				5A15AE132E16758100A528AD /* 6.png in Resources */,
+				5AB4C30E2E4095510021D30E /* index.html in Resources */,
 				5A9CCD612E0AA6F9006B96BA /* Main.storyboard in Resources */,
 				5A9CCD762E138259006B96BA /* HomeViewController.xib in Resources */,
 				5A15AE052E16740200A528AD /* TransitionAnimationVC.xib in Resources */,
@@ -231,6 +238,7 @@
 				5A9CCD5C2E0AA6F9006B96BA /* SceneDelegate.swift in Sources */,
 				5A15ADFD2E166B7500A528AD /* KeyFrameAnimationVC.m in Sources */,
 				5A15ADFA2E16686A00A528AD /* CABaseAnimationViewController.m in Sources */,
+				5AB4C30C2E4094DA0021D30E /* WKWebViewVC.swift in Sources */,
 				5A15AE032E166B9700A528AD /* GroupAnimationVC.m in Sources */,
 				5A15AE002E166B8400A528AD /* TransitionAnimationVC.m in Sources */,
 				5A15ADF52E16470300A528AD /* TransframeViewController.m in Sources */,

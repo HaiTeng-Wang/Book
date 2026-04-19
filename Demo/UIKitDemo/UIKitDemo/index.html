@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no"/>
+    <title>wkwebview</title>
+    <style type="text/css">
+        h1 {
+            color: red;
+            font-size: 1em;
+        }
+        body {
+            font-size: 2em;
+        }
+        button {
+            font-size: 0.5em;
+        }
+        p {
+            font-size: 0.5em
+        }
+        #tip {
+            color: blue;
+        }
+    </style>
+</head>
+<body>
+    <h1>WKWebview和JS交互</h1>
+
+    <div>
+        <p id="tip">ios调用js显示日期：</p>
+        <p id="date">这是一个段落</p>
+    </div>
+    <div id="userInfoContainer" style="display: none;">
+            <h3>用户信息</h3>
+            <div class="info-item">
+                <span class="label">姓名:</span> <span id="userName"></span>
+            </div>
+            <div class="info-item">
+                <span class="label">年龄:</span> <span id="userAge"></span>
+            </div>
+    </div>
+
+    <button type="button" onclick="nativeCallback()">js调用ios</button>
+    <script type="text/javascript">
+        function displayDate(){
+            document.getElementById("date").innerHTML=Date();
+        }
+
+        function nativeCallback() {
+            const userData = {
+                userId: "12345",
+                profile: {
+                    name: "张三",
+                    age: 28,
+                    hobbies: ["游泳", "读书", "编程"]
+                },
+                settings: {
+                    darkMode: true,
+                    fontSize: 16
+                },
+                timestamp: Date.now()
+            };
+
+            try {
+              //使用此方法,会报错,因此使用try-catch
+              webkit.messageHandlers.nativeCallback.postMessage(userData);
+<!--              webkit.messageHandlers.nativeCallback.postMessage('js调用ios');-->
+
+            } catch(error) {
+              console.log('WKWebView post message error: ', error);
+            }
+        }
+
+        // 原生回调的函数 - 现在将数据显示在页面上
+           function receiveUserInfo(userInfo) {
+               console.log("收到用户信息:", userInfo);
+
+               // 显示容器
+               document.getElementById('userInfoContainer').style.display = 'block';
+
+               // 填充数据
+               document.getElementById('userName').textContent = userInfo.name;
+               document.getElementById('userAge').textContent = userInfo.age;
+
+               // 如果需要，也可以添加更多信息
+               // document.getElementById('someOtherField').textContent = userInfo.otherProperty;
+           }
+    </script>
+</body>
+</html>

@@ -82,7 +82,7 @@ typedef void (^BlockType)(void);
     self.block = ^(){
         __strong typeof(self) strongSelf = weakSelf;
         NSLog(@"这里用了self: %@", strongSelf.iconView);
-        // 模拟一个block循环引用，使用instrument没有检测出来，静态分析也没有检测出来。但是如果直接在block内访问self的话，xcode会包循环引用警告。
+        // 模拟一个block循环引用，使用instrument没有检测出来，静态分析也没有检测出来。但是如果直接在block内访问self的话，xcode会报循环引用警告。
         // 如果要测试是否产生循环引用，可以看看当前类是否走dealloc方法。（或使用一个三方Lib，例如：有的Lib会交换VC 的pop方法，然后延迟三秒通过weak self调用方法，方法内可以弹窗或断言，如果VC未释放就好执行该方法。）。或者使用XCode的navigation debug board，看下vc个数是否为1。也可以看下其他对象是否为1.不为1证明有多个对象在内存中。
     };
 
