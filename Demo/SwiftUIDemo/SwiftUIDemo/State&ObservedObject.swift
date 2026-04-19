@@ -123,7 +123,7 @@ struct ObservedObjectExample: View {
 }
 
 fileprivate struct NameView: View {
-    @ObservedObject var timerData: TimerData // 注意：使用Combine的ObservableObject观察机制会有性能问题（ObservableObject无法提供属性粒度的订阅，在 SwiftUI 的 View 中，对 ObservableObject 的订阅是基于整个实例的，任何一个 @Published 属性发生改变，都会触发整个实例的 objectWillChange 发布者发出变化，进而导致所有订阅了这个对象的 View 进行重新求值。）。例如：这里TimerData实例拥有一个 @Published name属性，NameView 依赖TimerData，虽有TimerData 的 name属性没有改变，但是count属性改变也触发NameView的body进行重新求值。
+    @ObservedObject var timerData: TimerData // 注意：使用Combine的ObservableObject观察机制会有性能问题，不便于model进行向下传递（ObservableObject无法提供属性粒度的订阅，在 SwiftUI 的 View 中，对 ObservableObject 的订阅是基于整个实例的，任何一个 @Published 属性发生改变，都会触发整个实例的 objectWillChange 发布者发出变化，进而导致所有订阅了这个对象的 View 进行重新求值。）。例如：这里TimerData实例拥有一个 @Published name属性，NameView 依赖TimerData，虽有TimerData 的 name属性没有改变，但是count属性改变也触发NameView的body进行重新求值。
 
     init(timerData: TimerData) { // init方法不断地打印，这是因为SwiftUI的差异化更新机制（没性能问题）。差异化更新不会无差别渲染。
         self.timerData = timerData
@@ -132,7 +132,7 @@ fileprivate struct NameView: View {
 
     var body: some View {
         VStack {
-            Text("NameView - name: \(timerData.name)") // 这里没有使用变化的属性（timerData的count），body还是会不断地计算。解决方案: 将 View 的 model 进行细粒度拆分(eg: NameView只接收name字符串)，或者使用  Observation 框架（ @Observable 语法简洁，且可以直接把观察对象向下传递，其只更新变化的属性相对应的View。但是要注意此API支持iOS17+）。关于这可参考：[深入理解 Observation - 原理，back porting 和性能]（https://onevcat.com/2023/08/observation-framework/）
+            Text("NameView - name: \(timerData.name)") // 这里没有使用变化的属性（timerData的count），body还是会随着model的变化而重新计算。解决方案: 将 View 的 model 进行细粒度拆分(NameModle TimerModel)，或把view进行细粒度拆分(eg: NameView只接收let name字符串)，通常Model和View都进行拆分一一对应，或者使用 Observation 框架（ @Observable 语法简洁，且可以直接把观察对象向下传递，其只更新变化的属性相对应的View。但是要注意此API支持iOS17+）。关于这可参考：[深入理解 Observation - 原理，back porting 和性能]（https://onevcat.com/2023/08/observation-framework/）
             /*
              [@StateObject 和 @ObservedObject 的区别和使用](https://onevcat.com/2020/06/stateobject/)
              [iOS 17：告别ObservableObject，迎来@Observable](https://www.cnblogs.com/ZJT7098/p/17780166.html)

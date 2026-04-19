@@ -16,7 +16,7 @@
 @end
 
 // MARK: Category & Extention 练习
-@interface HomeViewController ()<HomeDelegate>{ // .m 中的延展（可以生命成员变量和方法，成员默认是private的，只有当前类能访问。分类子类都不可以）
+@interface HomeViewController ()<HomeDelegate>{ // .m 中的延展（可以声明成员变量和方法，成员默认是private的，只有当前类能访问。分类子类都不可以）
     // OC点语法和变量作用域 https://www.cnblogs.com/wendingding/p/3705658.html
     NSString *_sex; // Instance variable '_sex' is private。默认私有，只有当前类能访问。分类子类都不可以访问。
     @protected // 只有当前类可和子类能访问，分类也不可以访问。
@@ -57,7 +57,7 @@
     return self;
 }
 
-// 从Nib中唤醒的时候调用，可以从写此方法进行一些空间的初始配置，如果不方便在xib上配置的话。
+// 从Nib中唤醒的时候调用，可以从写此方法进行一些控件的初始配置，如果不方便在xib上配置的话。
 // 顺序： 1. initWithCoder 2.awakeFromNib
 // 代码的形式初始化本 VC (initWithNibName) 不走这个方法。
 - (void)awakeFromNib {

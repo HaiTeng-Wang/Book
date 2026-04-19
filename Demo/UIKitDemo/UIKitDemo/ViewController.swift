@@ -9,7 +9,7 @@ import UIKit
 
 class HTMLElement {
     var name: String = "HTML Name"
-    let text: String?
+    var text: String?
 
     // MARK: 计算属性，通过闭包或函数设置属性的默认值，lazy，循环引用(weak, unowned)练习笔记。
 
@@ -38,6 +38,30 @@ class HTMLElement {
 //        return someValue
 //    }()
 
+
+
+    // MARK: Lazy
+    /*
+     1. [延时加载存储属性](https://doc.swiftgg.team/documentation/the-swift-programming-language/properties#延时加载存储属性)
+     lazy 属性的初始化延迟到第一次被调用的时候。
+     属性声明前使用 lazy 来标示一个延时加载存储属性。
+     必须将延时加载属性声明成变量（使用 var 关键词），因为属性的初始值可能在实例构造完成之后才会得到。而常量属性在构造过程完成之前必须要有初始值，因此无法声明成延时加载。
+     lazy不是线程安全的。这意味着当我们在不同的线程上访问同一个变量时，可能会得到不同的值。
+
+     全局常量和变量总是以类似于 延时加载存储属性 的方式被延迟计算。与延迟存储属性不同，全局常量和变量不需要用 lazy 修饰符标记。
+
+     局部常量和变量从不延迟计算。
+
+     (Tip：因此，可以使用lazy修饰一个通过闭包初始化，去设置属性的默认值，的存储属性，在闭包内访问self)
+     [通过闭包或函数设置属性的默认值](https://doc.swiftgg.team/documentation/the-swift-programming-language/initialization#通过闭包或函数设置属性的默认值)
+
+     类型的存储属性在第一次访问时会被延迟初始化。即使在多个线程同时访问时，也保证只会初始化一次，并且不需要用 lazy 修饰符标记。
+
+    2.
+     - lazy sequences：按需迭代（调用闭包）eg（let incArr = array.lazy.map{ $0 + 1 } 不会立即执行。 incArr[2] 访问时会执行，而且根据具体访问的Element，调用一次闭包）
+     - lazy View（LazyHStack, LazyVStack, LazyHGrid, LazayVGrid）：按需加载。（例子：ScrollView包裹LazyHstack，LazyHstack上有N个文本。按需初始化加载文本。）
+     */
+    // lazy 练习：
     // 定义懒加载存储属性，通过闭包设置属性的默认值 (在该属性被首次访问时闭包会被调用，返回值会当做默认值赋值给这个属性。)。
     // lazy修饰的属性必须用var定义。因为属性的初始值可能在实例构造完成之后才会得到。而常量属性在构造过程完成之前必须要有初始值，因此无法声明成延时加载。
     // 因为属性延迟加载，所以闭包体内可以访问到self。
@@ -54,7 +78,7 @@ class HTMLElement {
          unowend vs weak
          都是为了避免所修饰的引用类型造成循环引用，其互相持有，导致引用计数都不为0，而没有被释放。产生内存泄露。
          不同之处在于:
-         1. weak 会相当于将所修饰的类型转换为可选类型。访问的时候需要可选访问，或对其进行可选绑定。当其修饰的示例可能先被释放，或者说，生命周期更短，且需要打破引用循环时，使用弱引用。
+         1. weak 会相当于将所修饰的类型转换为可选类型。访问的时候需要可选访问，或对其进行可选绑定。当其修饰的实例可能先被释放，或者说，生命周期更短，且需要打破引用循环时，使用弱引用。
          2. unowned 会相当于将所修饰的类型转换为一定不为空的可选类型，访问的时候无需解包，但如果所修饰的类型为一但为nil，对其访问会crash！无主引用是在另一个实例具有相同或更长的生命周期时使用的，也就是说，当确定自己所引用类型实例生命周期一定比自己长，且需要打破引用循环时使用。
          官方例子：
          unowned
@@ -92,30 +116,32 @@ class HTMLElement {
     deinit {
         print("\(name) is being deinitialized")
     }
-
-
 }
 
 class ViewController: UIViewController {
 
+    @IBOutlet weak var testView: UIView!
+    @IBOutlet weak var imageView: UIImageView!
     @IBOutlet weak var label: UILabel!
-
-    lazy var clouser: () = {
-        [weak self] in
-
-        if let this = self {
-            this.label.text = "dfsd"
-        }
-
-    }()
 
     var paragraph: HTMLElement? = HTMLElement(name: "p", text: "hello, world")
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        // MARK: 离屏渲染：
 //        label.layer.masksToBounds = true // button label，等view，切圆角时候，如果调用了masksToBounds 会造成离屏渲染 (无需调用)。同时需知道，ImageView 设置了 cornerRadius 即使没有调用 masksToBounds，也会造成离屏渲染。（可以让UI直接切好图，或者自己进行异步绘制。）
-        label.layer.cornerRadius = 20
-        label.layer.backgroundColor = UIColor.red.cgColor
+//        label.layer.cornerRadius = 20
+//        label.layer.backgroundColor = UIColor.red.cgColor
+
+//        imageView.layer.cornerRadius = 10
+
+//        testView.layer.shadowColor = UIColor.red.cgColor
+//        testView.layer.shadowOffset = CGSizeMake(12, 5)
+//        testView.layer.shadowOpacity = 0.3
+//        testView.layer.shadowRadius = 5
+
+//        testView.alpha = 0.5
+//        testView.layer.allowsGroupOpacity = true
 
     }
 
@@ -132,6 +158,10 @@ class ViewController: UIViewController {
     @IBAction func goConbineTestVC() {
         present(CombineTestViewController(), animated: true)
     }
+
+    @IBAction func clickWKWebView(_ sender: Any) {
+        navigationController?.pushViewController(WKWebViewVC(), animated: true)
+    }
 }
 
 
@@ -142,7 +172,6 @@ public class RetainCycleVC: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .red
         myView = MyView(self)
-        打印()
     }
 
     func 打印() {
@@ -152,7 +181,7 @@ public class RetainCycleVC: UIViewController {
     }
 
     deinit {
-
+ // 验证循环引用：1. deinit 不走; 2. 同时可以通过debug memory graph查看. 3. instaument leak 没查看出来; 4. 静态分析也没有查看出来
     }
 }
 

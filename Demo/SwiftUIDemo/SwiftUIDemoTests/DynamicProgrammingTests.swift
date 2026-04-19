@@ -6,6 +6,7 @@
 //
 
 import XCTest
+import Foundation
 
 /*
  动态规划：DP（Dynamic Programming）：把原问题分解为相对简单的子问题的方式求解复杂问题的方法。
@@ -32,20 +33,20 @@ final class DynamicProgrammingTests: XCTestCase {
     /*
      例题：斐波拉契数列
      斐波拉契数列是这样一个数列：1, 1, 2, 3, 5, 8, ... 除了第一个和第二个数字为1以外，其他数字都为之前两个数字之和。现在要求第n（eg: 100）个数字是多少。
-
+     
      例题：青蛙跳阶问题（和fbi一样，只不过换种问法）
      一只青蛙一次可以跳上1级台阶，也可以跳上2级台阶。求该青蛙跳上一个 10 级的台阶总共有多少种跳法。
      这里不做演示，参考：https://zhuanlan.zhihu.com/p/365698607
      */
-
-
+    
+    
     func testfib() {
         /*
          1. 自顶向下（最原始的递归，写法简单，但效率很低）
          Complex:
          时间：O(1) * O(2^n) = O(2^n) 指数级别
-          - 解决一个子问题f（n-1）+f（n-2），也就是一个加法的操作，所以复杂度是 O(1)
-          - 问题个数 = 递归树节点的总数，递归树的总节点 = 2^n-1，所以是复杂度O(2^n)
+         - 解决一个子问题f（n-1）+f（n-2），也就是一个加法的操作，所以复杂度是 O(1)
+         - 问题个数 = 递归树节点的总数，递归树的总节点 = 2^n-1，所以是复杂度O(2^n)
          空间：O(1)
          */
         func fib(_ n: Int) -> Int {
@@ -57,16 +58,16 @@ final class DynamicProgrammingTests: XCTestCase {
         }
         print("自顶向下（最原始的递归，写法简单，但效率很低）: \(fib(10))")
     }
-
+    
     func testfibWithMemorandum() {
         /*
          Final 1. 自顶向下（带备忘录的递归）
          Complex：
          时间：O(n)
-          - 子问题个数 = 树节点数 = n，
-          - 解决一个子问题还是O(1)
+         - 子问题个数 = 树节点数 = n，
+         - 解决一个子问题还是O(1)
          空间：O(n) 空间换时间
-
+         
          当n特别大的时候，有栈溢出风险。
          栈溢出：每一次递归，程序都会将当前的计算压入栈中。随着递归深度的加深，栈的高度也越来越高，直到超过计算机分配给当前进程的内存容量，程序就会崩溃。
          */
@@ -75,24 +76,24 @@ final class DynamicProgrammingTests: XCTestCase {
             func fib(_ n: Int) -> Int {
                 // 定义初始状态
                 guard n > 0 else { return 0 }
-
+                
                 if n == 1 || n == 2 { return 1 }
-
+                
                 // 备忘录: 如果已经计算过，直接调用，无需重复计算
                 if nums[n - 1] != 0 { return nums[n - 1] }
-
+                
                 // 将计算后的值存入数组
                 nums[n - 1] = fib(n - 1) + fib(n - 2)
-
+                
                 return nums[n - 1]
             }
             return fib(n)
         }
-
+        
         print("自顶向下（带备忘录的递归）: \(fibWithMemorandum(10))")
     }
-
-
+    
+    
     func testfibWithTabulation() {
         /*
          2. 自底向上（表格法）通过一个数组从前往后推
@@ -109,7 +110,7 @@ final class DynamicProgrammingTests: XCTestCase {
         }
         print("自底向上（表格法）通过一个数组从前往后推: \(fib(10))")
     }
-
+    
     func testfibBestWithTabulation()  {
         /*
          Final 2. 自底向上（表格法）空间优化版本，只用两个变量就能快速算出结果
@@ -120,7 +121,7 @@ final class DynamicProgrammingTests: XCTestCase {
         func fibBest(_ n: Int) -> Int {
             var(pre, cur) = (0, 1)
             for _ in 2 ... n {
-                (cur, pre) = (cur + pre, cur)
+                (pre, cur) = (cur, cur + pre)
             }
             return cur
         }

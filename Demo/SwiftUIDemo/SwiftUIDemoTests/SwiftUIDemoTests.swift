@@ -46,29 +46,6 @@ Debug:
  ----
  */
 
-
-// MARK: Lazy
-/*
- 1. [延时加载存储属性](https://doc.swiftgg.team/documentation/the-swift-programming-language/properties#延时加载存储属性)
- lazy 属性的初始化延迟到第一次被调用的时候。
- 属性声明前使用 lazy 来标示一个延时加载存储属性。
- 必须将延时加载属性声明成变量（使用 var 关键词），因为属性的初始值可能在实例构造完成之后才会得到。而常量属性在构造过程完成之前必须要有初始值，因此无法声明成延时加载。
- lazy不是线程安全的。这意味着当我们在不同的线程上访问同一个变量时，可能会得到不同的值。
-
- 全局常量和变量总是以类似于 延时加载存储属性 的方式被延迟计算。与延迟存储属性不同，全局常量和变量不需要用 lazy 修饰符标记。
-
- 局部常量和变量从不延迟计算。
-
- (Tip：因此，可以使用lazy修饰一个通过闭包初始化，去设置属性的默认值，的存储属性，在闭包内访问self)
- [通过闭包或函数设置属性的默认值](https://doc.swiftgg.team/documentation/the-swift-programming-language/initialization#通过闭包或函数设置属性的默认值)
-
- 类型的存储属性在第一次访问时会被延迟初始化。即使在多个线程同时访问时，也保证只会初始化一次，并且不需要用 lazy 修饰符标记。
-
-2.
- - lazy sequences：按需迭代（调用闭包）eg（let incArr = array.lazy.map{ $0 + 1 } 不会立即执行。 incArr[2] 访问时会执行，而且根据具体访问的Element，调用一次闭包）
- - lazy View（LazyHStack, LazyVStack, LazyHGrid, LazayVGrid）：按需加载。（例子：ScrollView包裹LazyHstack，LazyHstack上有N个文本。按需初始化加载文本。）
- */
-
 // MARK: 测试查看 mutating 和 nomutating关键字
  struct Logger {
      var storedValue: Int
@@ -224,11 +201,11 @@ func makeProtocolContainer<T>(item: T) -> any Container {
 }
 
 // MARK: 初始化器练习
-// 关于访问级别：构造器和函数一样，遵循访问级别指导原则。指定初始化器的访问级别必须和类型访问级别一致。默认初始化器访问级别：本类Public, open -> internal, 本类fileprivate->fileprivate，本类private->private。结构体中如果成员为 private或fileprivate，默认的成员逐一初始化器也为private或fileprivate。如果本类为Public, open internal 默认成员逐一初始化器访问级别则为 internal。
-class InitClass { // 类的初始化器遵循两段式构造过程：1. 类中每个存储属性都有一个初始值 2. 新实例准备使用之前可以自定义他们的存储属性。4种有效的安全检查：1. 保证所在类的所有属性都初始化完->构造任务向上代理给父类构造器——>2.继承属性设置新值。3.便利构造器为任意属性赋值之前需代理调用其它构造器。4.构造器在第一阶段（每个属性都要有初始值）构造未完成之前不能读取任何实例属性的值，不能引用self作为一个值（eg:函数闭包作为一个属性成员的实现内不能用self访问其它成员和self本值）
+// 关于访问级别：构造器和函数一样，遵循访问级别指导原则。初始化器访问级别：本类Public, open -> internal, 本类fileprivate->fileprivate，本类private->private。结构体中如果成员为 private或fileprivate，默认的成员逐一初始化器也为private或fileprivate。如果本类为Public, open internal 默认成员逐一初始化器访问级别则为 internal。
+public class InitClass { // 类的初始化器遵循两段式构造过程：1. 类中每个存储属性都有一个初始值 2. 新实例准备使用之前可以自定义他们的存储属性。4种有效的安全检查：1. 保证所在类的所有属性都初始化完->构造任务向上代理给父类构造器——>2.继承属性设置新值。3.便利构造器为任意属性赋值之前需代理调用其它构造器。4.构造器在第一阶段（每个属性都要有初始值）构造未完成之前不能读取任何实例属性的值，不能引用self作为一个值（eg:函数闭包作为一个属性成员的实现内不能用self访问其它成员和self本值）
     var name: String?
     var age: Int // swift要求所有存储属性必须有初始值，如果所有存储属性都有初始值会自动提供一个默认的初始化器eg:InitClass()。默认初始化器即为指定初始化器，每个类必须至少有一个指定初始化器。
-    init(age: Int) {
+    private init(age: Int) {
         self.age = age
     }
     init(_ age: Int = 0) {
@@ -256,18 +233,24 @@ class sonClass: superClass {
 }
 
 
-struct InitStruct{
-    private var name: String? //
-    var age: Int // 要求所有存储属性必须有初始值，否则无法写初始化器，外部也无法初始化
+struct InitStruct {
+//    private var name: String?
+    var age: Int /* 结构体中所有存储属性也是都要有初始值，定义的时候可以不给初始值，但是必须初始化中必须给值。
+                  InitStruct.init(age: 0, name: "", sex: 0)
+                  InitStruct.init(age: 0, name: "")
+                  InitStruct.init(name: "") 否则会报error "Missing argument for parameter 'age' in call"
+                   */
+    var name: String
     var sex: Int = 0
-    init(age: Int) { // 如果你为某个值类型定一个自定义构造器，你将无法访问到默认构造器和逐一成员构造器。但是将自定义构造器写在extension中，就没关系。但是要注意结构体内是否有private或fileprivate访问修饰符修饰的存储属性，这会导致结构体的逐一成员构造器也是相对应的访问级别，从而没失去意义。
-        self.age = age
-    }
+//    init(age: Int) { // 如果你在结构体类型中定一个自定义构造器，你将无法访问到默认构造器和逐一成员构造器。但是将自定义构造器写在extension中，就没关系。但是要注意结构体内是否有private或fileprivate访问修饰符修饰的存储属性，这会导致结构体的逐一成员构造器也是相对应的访问级别，从而没失去意义。
+//        self.age = age
+//    }
 }
-
+//
 //extension InitStruct {
 //    init(age: Int) {
 //        self.age = age
+//        self.name = "" // 如果把这行注释掉，会报erro: Return from initializer without initializing all stored properties
 //    }
 //}
 
@@ -286,8 +269,63 @@ extension PrivateProtocol {
 
 }
 
-
-
 final class SwiftUIDemoTests: XCTestCase {
+
+    func test_the_use_of_sequence_operators() {
+        /*
+         Tips:
+         - We need always use the `guard` to do the pre condition.
+         - For the String, mayby we can convert to Array to operation that due to the string subscript is the type of Index.
+         - We can use the Tuple type to swap two value.
+         eg1:
+         var (a, b) = (0, 1)
+         for _ in 2 ... n { (a, b) = (b, a + b)}
+         eg2:
+         func _swap<T>(_ chars: inout [T], _ p: Int, _ q: Int) {
+         (chars[p], chars[q]) = (chars[q], chars[p])
+         }
+         - Iteration: for _ in 0 ..< array.count  |  while left < right { left ++; right--} | recursion
+         */
+
+        // The commens mean: "// return type // prints or Tip"
+        // Declaring the part of belows as `var` means that the corresponding example operation can only be used on the variable
+
+        _ = "AEIOU".lowercased() // String
+        _ = "aeiou".uppercased() // String
+
+        var append = ""; append.append("") // String // Tip: The type of Set needs to using insert(element)
+        var appendSequence = [1]; appendSequence.append(contentsOf: [2]) // [Int]
+
+        var removeFirst = "1"; _ = removeFirst.removeLast(); // String.Element
+        var removeAt = "1"; _ = removeAt.remove(at: removeAt.startIndex) // Character
+        var removeLast = "1"; _ = removeLast.removeLast() // String.Element
+
+        _ = "split,separater".split(separator: ",") // [String.SubSequence]
+
+        _ = "reversed".reversed() // ReversedCollection<String>
+
+        _ = "abcde".sorted() // Array // prints ["a", "b", "c", "d", "e"]
+        _ = [("Alim", 30), ("Jeff", 39), ("Hunter", 32)].sorted { $0.1 > $1.1 }
+        var sort = [1, 2, 4, 3, 0]; sort.sort() // Array [0, 1, 2, 3, 4]
+
+        _ = [1, 2, 3].contains(1) // Bool
+        _ = [-1, 0, 1, 2, 3].contains(where: {$0 > 0}) // Bool
+        _ = "".contains(where: { $0.isNumber || $0.isLetter || $0.isUppercase || $0.isSymbol || $0.isWhitespace }) // Bool
+
+        _ = max(10, 100) // T : Comparable
+        _ = ["Heliotrope": 296, "Coral": 16, "Aquamarine": 156].max{ $0.value < $1.value } // Self.Element? // Prints "Optional((key: "Heliotrope", value: 296))"
+
+        _ = [1, 3, 5, 100].enumerated().max(by: { $0.element < $1.element })?.offset  // Tip: 1. $0 is let $0: (offset: Int, element: Int); 2. This operator will get the max element index for array, that will return Optional(3)
+
+        _ = [["a"], ["b"], ["c"]].reduce([String](), +) // [String]
+        _ = "aabbc".reduce(into: [:]) { $0[$1, default: 0] += 1 } // Dic // prints ["a":2, "b": 2, c: 1]
+        _ = "reduceInto".reduce(into: "") { if !"aeiouAEIOU".contains($1) {$0.append($1)} } // String
+        _ = "".filter { $0 != "1" } // Tip: Use the same about `map` `flatMap` `compatMap`
+
+        _ = Array(repeating: String(repeating: "", count: 10), count: 10) // [String]
+        _ = String(Set(String(Array(String("aabbc"))))) // String // prints "abc" // Tip: init with sequences
+
+    }
+
 
 }

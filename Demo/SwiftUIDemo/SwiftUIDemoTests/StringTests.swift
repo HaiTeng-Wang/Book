@@ -173,8 +173,6 @@ final class StringTests: XCTestCase {
 
 
     func testFirstUniqChar() {
-        let source = [1, 2, 3, 4, 5]
-
         func firstUniqChar(_ s: String) -> Int {
             var dic = [Character: Int]()
             for char in s {
@@ -189,6 +187,59 @@ final class StringTests: XCTestCase {
         }
 
         print("firstUniqChar：\(firstUniqChar("dsfsffee"))")
+    }
+
+
+    func testRemoveVowels() {
+        func removeVowels(_ input: String) -> String {
+            let vowels = ["a", "e", "i", "o", "u", "A", "E", "I", "O", "U"]
+            return input.reduce(into: "") { partialResult, char in
+                if !vowels.contains(String(char)) {
+                    partialResult.append(char)
+                }
+            }
+        }
+        print(removeVowels("abcdeiOUfD"))
+    }
+
+    func testIsSymmetric() {
+        func isSymmetric(_ str: String) -> Bool {
+//          // solution 1
+//            guard str.count > 2 else { return true }
+//            let leftSplitPoint = (str.count % 2) == 0 ? (str.count / 2) - 1 : (str.count / 2)
+//            let rightSplitPoint = str.count / 2
+//            let leftStr = str[...str.index(str.startIndex, offsetBy: leftSplitPoint)]
+//            let rightStr = str[str.index(str.startIndex, offsetBy: rightSplitPoint)...]
+//            return leftStr == String(rightStr.reversed())
+
+            // solution 2
+            str.elementsEqual(str.reversed())
+
+            // solution 3 使用双指针。左右指针分别指向str的两侧，while lef < right { if str[left] == str[right] return false right-- left++ } while循环检测完后，就可以return true了，说明是回文串。
+        }
+        print(isSymmetric("abba"))
+        print(isSymmetric("aba"))
+        print(isSymmetric("abbaa"))
+    }
+
+    func testIsPalindrome() {
+        func isPalindrome(_ s: String) -> Bool {
+            func isValid(_ char: Character) -> Bool {
+                let lowercaseStr = "qwertyuiopasdfghjklzxcvbnm"
+                let uppercaseStr = "QWERTYUIOPASDFGHJKLZXCVBNM"
+                let num = "1234567890"
+                return lowercaseStr.contains(char) || uppercaseStr.contains(char) || num.contains(char)
+            }
+
+            let validStr = s.reduce(into:"") {
+                if isValid($1) {$0.append($1)}
+            }
+
+            return validStr.lowercased() == String(validStr.reversed()).lowercased()
+
+        }
+        print(isPalindrome("race a car"))
+        print(isPalindrome("A man, a plan, a canal: Panama"))
     }
 
 }

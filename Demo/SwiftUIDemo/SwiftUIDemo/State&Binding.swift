@@ -83,9 +83,9 @@ struct State_BindingSampleView: View {
 
     @State private var isOn: Bool = false
     @State private var text = "" /*
-                                  这里之所以能改变text变量值，是因为： @State 的值实际由 SwiftUI 的框架层托管，存储在视图外部的某个独立内存区域（非视图结构体内部）
+                                  这里（结构体的body内）之所以能改变text变量值，是因为： @State 的值实际由 SwiftUI 的框架层托管，存储在视图外部的某个独立内存区域（非视图结构体内部）
                                   所以text为：var text: String { get nonmutating set }
-                                  如果这里不使用 @State，则text为 var text: String { get set }， 则无法改变text的值，编辑器会报错:Cannot assign to property: 'self' is immutable
+                                  如果这里不使用 @State，则text为 var text: String { get set }， 则body内无法改变text的值（body为some view类型的只读计算属性），编辑器会报错:Cannot assign to property: 'self' is immutable
                                   同时须知道：SwiftUI 遵循 Single Source of Truth 的原则，只有修改 View 所订阅的状态，才能改变 view tree 并触发对 body 的重新求值，进而刷新 UI。
                                   */
 
