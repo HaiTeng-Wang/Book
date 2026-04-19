@@ -116,8 +116,5 @@ What is your expected salary？
 
 Could you share the budget range for this position first? That would help us both align.
 
-My current package is around 150k per year including bonus. But my previous role at Fidelity was 20k per month.
-Based on my 10 years of iOS experience and the market in Shenzhen, I am expecting 35k per month.
-
 ## 反问环节
 Could you introduce the team with me? 
