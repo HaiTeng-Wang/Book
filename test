@@ -1,0 +1,2720 @@
+# Must-Know Vocabulary
+## A
+Associated(associated value) \ argument
+## B
+## C
+Cycle(retain cycle, lifecycle) \ Capture(capture list) \ Constraint \ Convenience \ Compute (computed properties) \ Constant \ Conform(conform to the Hashable protocol, and meet requirements)
+
+## D
+Declare \ Define \ Describe (Describes what the function does) \ Designated \ Dot(dot syntax chain)
+## E
+Especially \ Escaping(escaping closure) \ Exit(eraly exit) \ Execute(Execute the code.) \ External \ Entity
+## F
+Force(force unwrapping)
+## G
+Generic (generic collection)
+## H
+## I
+Improve (improveing readability) \ In Summary \ Indicate \ Implicit(Implicit Or Explicit)
+## J
+## K
+## L
+## M
+Manual \ Multiple(multiple values) \ Mutable And Immutable(mutable variable, mutable state) \ Modern
+## N
+Nested(Nested Functions) \ Nil-coalescing (??)
+## O
+Otherwise(otherwise, the else block executes.) \ Omit(omit lable) \ Opaque(Opaque Types and Boxed Protocol Types) \ Optional(optional chaining)
+## P
+Parameter \ Principle
+## Q
+## R
+regardless of(The system will retry regardless of the error type.) \ Represent
+## S
+Serial(serial queue) \ statement (if statement, switch statement) \ Symbol \ Syntax \ Subscript \ Subscription \ Several
+## T
+Trailing(trailing closure)
+## U
+Unique(unique key) \ Unwrap(force unwarp, implicitly unwrapped optional)
+## V
+Variable \  
+## W
+## X
+## Y
+## Z
+
+| 符号 | 英文名称 | 中文名称 |
+| ----------- | ----------- | ----------- |
+| &	| ampersand | & 和号 |
+| @	| at sign	| @ 符号 |
+| #	| hash(pound sign)	| 井号 |
+| *	| asterisk	| * 星号 |
+| ; | semicolons | 分号 |
+| !	| exclamation mark	| 感叹号 |
+| ?	| question mark	| 问号 |
+| () | parentheses / round brackets	 | 圆括号 / 小括号 |
+| {}	| braces / curly braces	| 花括号 / 大括号 |
+| [] |	brackets / square brackets |	方括号 / 中括号 |
+| <> |	angle brackets	| 尖括号 |
+
+
+# Swift
+
+## Memory management(ARC)
+1.iOS 内存管理机制 
+iOS uses Automatic Reference Counting (ARC) to manage memory. ARC automatically tracks how many strong references point to an object. When the reference count drops to zero, ARC deallocates the object and releases its memory. In a normal situation, We don't need to manually call retain or release for memory management.
+
+2. 内存泄漏的根本原因
+However, memory leaks happen when ARC cannot deallocate an object because the reference count never reaches zero, even though the app no longer needs the object. This is typically caused by the retain cycle (also called a circular reference). And (结果) over time, the app consumes more and more memory, which can lead to the app becomes slow or may crash.
+
+3. 常见的循环引用场景
+Here are the most common causes of retain cycles in iOS development:
+a) Delegates: Using a strong reference for a delegate.  
+  If there's a potential retain cycle between the delegating object and its delegate (e.g., both hold strong references to each other), the delegate reference should be weak. However, if the delegate is a short-lived object (e.g., a method parameter or a temporary helper), a strong reference may be appropriate and simpler.
+```swift
+// Sample
+class ViewController: UIViewController, DataLoaderDelegate {
+    let loader = DataLoader() // self -> loader
+    init() { loader.delegate = self } // loader -> self
+}
+class DataLoader { var delegate: DataLoaderDelegate? }
+```
+b) Closures: Capturing self strongly inside a closure.
+  As we know, closures are reference types. If a closure is stored as a property and self is called within the closure, a retain cycle occurs, that means self holds the closure, and the closure captures self, or we can say, holds self. So, this is a retain cycle, we can fix this by using a capture list, such as [weak self] or [unowned self].
+c) Two objects holding strong references to each other.
+  For example, like the Person and Apartment example from Swift's official documentation, the Person class has an Apartment property, and the Apartment class has a Person property. When they hold references to each other, a strong reference cycle occurs. In this case, we can use weak to break the cycle.
+d) Timer: 
+  A Timer or CADisplayLink that holds a strong reference to its target (like self). If not invalidated properly, they keep self alive forever. So we need to call the invalidate function in the right place, like viewWillDisappear or deinit.
+  Additionally, note that if we create a timer using a closure and the timer is stored as a property of the current class, we must capture self weakly within the closure body; otherwise, a retain cycle will still occur.
+e) Observer:
+  On iOS 11 and later, the new KVO observe API is automatically cleaned up. However, for NotificationCenter's block API, if we don't remove the token, it won't crash, but the block will stay alive and continue to execute, leading to memory leaks. So we need to be careful about this — we still need to manually remove it in this situation.
+f) CoreFundation Object: 
+  For CoreFoundation objects like CFRunLoopObserver or CFNotificationCenter, there's no automatic cleanup, ARC doesn't cover them. We must manually remove them and call CFRelease. Otherwise, that will get leaks or crashes.
+
+4.如何检测内存泄漏
+1) Instruments (Leaks tool) 
+   Detects leaked memory while running the app. It can show a red "X" when a leak occurs. However, when I simulated a closure's retain cycle, this，tool is ineffective for me that failed to detect memory leaks.
+2) Static analyzer
+   I also tried Xcode's static analyzer, but the result was not ideal — it didn't detect the memory leak. It only gave some code warnings, like uncalled supers methods, unused variable declarations, and so on.
+3) Xcode Memory Graph Debugger
+   This tool is very useful. Visually displays object references and retain cycles. It can shows whether multiple instances of the same object appear in the memory graph. I have tested and confirmed it works effectively for identifying memory leaks.
+4) Deinit Method Check
+   We can add a breakpoint or log inside the deinit method to verify whether an object is properly released.
+
+
+5. 其它注意
+Other notes: Besides memory leaks, there are other situations that increase memory usage.
+  - `imageWithName`: loads images into RAM. For large images or images that are not frequently used, we can use `imageWithContentsOfFile` API instead:.
+  - Avoid creating too many singletons or static instances. They live forever with the app. Also, they make testing harder.
+  - Don't use UIWebView, It has poor performance It's deprecated by Apple. Use WKWebView instead.
+
+week vs unowend
+
+## Optional type
+
+## Closure
+
+## Concurrence
+
+# SwiftUI
+## @State
+
+# Combine
+ - publisher
+ - subscriber
+
+# Chanllege or critical issue or Crash
+
+# Performance Optimization
+
+# Testing Framework
+
+# Pod
+
+---
+
+# Swift Programming Language Notes
+
+Quick reference based on [The Swift Programming Language (6.2.3)](https://doc.swiftgg.team/documentation/the-swift-programming-language).
+
+## Basics, Basic Operators, Strings and Characters
+Omitted — skim the documentation.
+
+## Collection Types
+
+Swift provides three primary collection types: `Array`, `Set`, `Dictionary`.
+
+- **Array**: Ordered collection. Duplicates allowed.
+- **Set**: Unordered collection of unique values. Elements must be `Hashable`.
+  - Swift basic types (`String`, `Int`, `Double`, `Bool`) and enum cases without associated values are `Hashable` by default.
+  - Custom types: conform to `Hashable`.
+  - Common operations:
+    ```swift
+    var favoriteGenres: Set = ["Rock", "Classical", "Hip hop"]
+    favoriteGenres.count          // 3
+    favoriteGenres.isEmpty        // false
+    favoriteGenres.insert("Jazz")
+    favoriteGenres.remove("Rock") // Optional("Rock")
+    favoriteGenres.contains("Funk") // false
+    for genre in favoriteGenres { print(genre) }
+    ```
+  - Set algebra:
+    - `intersection(_:)` — intersection
+    - `symmetricDifference(_:)` — symmetric difference
+    - `union(_:)` — union
+    - `subtracting(_:)` — difference
+    ```swift
+    let oddDigits: Set = [1, 3, 5, 7, 9]
+    let evenDigits: Set = [0, 2, 4, 6, 8]
+    let primes: Set = [2, 3, 5, 7]
+    oddDigits.union(evenDigits).sorted()                    // [0,1,2,3,4,5,6,7,8,9]
+    oddDigits.intersection(evenDigits).sorted()             // []
+    oddDigits.subtracting(primes).sorted()                  // [1, 9]
+    oddDigits.symmetricDifference(primes).sorted()          // [1, 2, 9]
+    ```
+  - Set membership:
+    ```swift
+    let houseAnimals: Set = ["🐶", "🐱"]
+    let farmAnimals: Set = ["🐮", "🐔", "🐑", "🐶", "🐱"]
+    let cityAnimals: Set = ["🐦", "🐭"]
+    houseAnimals.isSubset(of: farmAnimals)     // true
+    farmAnimals.isSuperset(of: houseAnimals)   // true
+    farmAnimals.isDisjoint(with: cityAnimals)  // true
+    ```
+- **Dictionary**: Unordered key-value pairs. Keys must be `Hashable`.
+
+All three are generic collections. Bridged to Foundation's `NSArray`, `NSSet`, `NSDictionary`.
+
+## Control Flow
+
+- **`guard`**: Early exit. If condition is false, the `else` block must exit the scope.
+- **`defer`**: Executes when the current scope ends, regardless of how control leaves (return, break, throw, or natural end).
+  ```swift
+  var score = 1
+  if score < 10 {
+      defer { print(score) }
+      score += 5
+  }
+  // Prints "6"
+  ```
+  - Multiple `defer` blocks execute in reverse order (LIFO).
+  - Guaranteed execution on `return`, `break`, `throw`.
+  - **Not** executed on crashes (e.g., `fatalError`, bad memory access).
+  - Use case: paired operations — unlock, release memory, close file handles, end DB transactions.
+
+- **Control Transfer Statements** (5 total):
+  - `continue` — skip current loop iteration
+  - `break` — exit entire control flow
+  - `fallthrough` — continue to next `switch` case
+  - `return` — return from function
+  - `throw` — throw an error
+
+- **Pattern Matching** in `for` and `if`:
+  ```swift
+  let points = [(10, 0), (30, -30), (-20, 0)]
+  for case (let x, 0) in points {
+      print("Point on x-axis at \(x)")
+  }
+  for case let (x, y) in points where x == y || x == -y {
+      print("(\(x), \(y)) on diagonal")
+  }
+  ```
+
+- **`where` clause**: Add conditions to `case` branches.
+  ```swift
+  switch (1, -1) {
+  case let (x, y) where x == y:  print("on x == y")
+  case let (x, y) where x == -y: print("on x == -y")
+  case let (x, y):                print("arbitrary point")
+  }
+  ```
+
+## Functions
+
+Skim the documentation for basics.
+
+### Key Points
+
+- **Argument labels vs parameter names**: Each parameter has an external label and internal name. Default: label = name.
+  ```swift
+  func greet(person: String, from hometown: String) -> String { ... }
+  greet(person: "Bill", from: "Cupertino")
+  ```
+- **Omit label**: Use `_`.
+  ```swift
+  func someFunction(_ first: Int, second: Int) { ... }
+  someFunction(1, second: 2)
+  ```
+- **Default values**: Place after parameters without defaults.
+  ```swift
+  func f(a: Int, b: Int = 12) { ... }
+  ```
+- **Variadic parameters**: `Double...` accepts zero or more values.
+- **In-Out parameters**: `inout` + `&` at call site. Modifies the original variable.
+  ```swift
+  func swapTwoInts(_ a: inout Int, _ b: inout Int) { ... }
+  swapTwoInts(&someInt, &anotherInt)
+  ```
+
+### Function Types
+
+```swift
+func addTwoInts(_ a: Int, _ b: Int) -> Int { ... }
+var mathFunction: (Int, Int) -> Int = addTwoInts
+// As parameter:
+func printMathResult(_ mathFunction: (Int, Int) -> Int, _ a: Int, _ b: Int) { ... }
+// As return type:
+func chooseStepFunction(backward: Bool) -> (Int) -> Int { ... }
+```
+
+### Nested Functions
+```swift
+func chooseStepFunction(backward: Bool) -> (Int) -> Int {
+    func stepForward(input: Int) -> Int { input + 1 }
+    func stepBackward(input: Int) -> Int { input - 1 }
+    return backward ? stepBackward : stepForward
+}
+```
+
+## Closures
+
+A **closure** captures and stores references to constants/variables from its surrounding context.
+
+Three forms:
+- **Global functions** — named, capture nothing
+- **Nested functions** — named, capture from enclosing scope
+- **Closure expressions** — anonymous, lightweight syntax, capture from context
+
+### Closure Expression Syntax
+```swift
+{ (parameters) -> ReturnType in statements }
+```
+
+Shorthand forms (using `sorted` as example):
+```swift
+reversedNames = names.sorted(by: { s1, s2 in return s1 > s2 })  // inferred types
+reversedNames = names.sorted(by: { s1, s2 in s1 > s2 })          // implicit return
+reversedNames = names.sorted(by: { $0 > $1 })                    // shorthand args
+reversedNames = names.sorted { $0 > $1 }                         // trailing closure
+reversedNames = names.sorted(by: >)                              // operator method
+```
+
+### Trailing Closures
+When a closure is the last argument, write it outside the parentheses. If it's the only argument, omit `()`.
+```swift
+someFunctionThatTakesAClosure() { ... }
+someFunctionThatTakesAClosure { ... }  // only argument → omit ()
+```
+
+Common higher-order functions:
+```swift
+[1, 2, 3].map { "\($0)" }                    // ["1", "2", "3"]
+["1", "2", "3", "a"].compactMap { Int($0) }  // [1, 2, 3] — filters nil
+[1, 2, 3].flatMap { Array(repeating: $0, count: $0) } // [1, 2, 2, 3, 3, 3]
+[-1, 1, 2].filter { $0 < 0 }                 // [-1]
+[1, 2, 3].reduce(0, +)                       // 6
+```
+
+Multiple trailing closures:
+```swift
+loadPicture(from: server) { picture in
+    someView.currentPicture = picture
+} onFailure: {
+    print("Download failed.")
+}
+```
+
+### Capturing Values
+Closures capture by reference. Swift handles memory management for captured variables.
+```swift
+func makeIncrementer(forIncrement amount: Int) -> () -> Int {
+    var runningTotal = 0
+    func incrementer() -> Int {
+        runningTotal += amount
+        return runningTotal
+    }
+    return incrementer
+}
+let incByTen = makeIncrementer(forIncrement: 10)
+incByTen() // 10
+incByTen() // 20
+```
+
+**Warning**: If a closure assigned to a class property captures `self`, it creates a strong reference cycle. Use **capture lists** (`[weak self]`, `[unowned self]`) to break it.
+
+### Closures Are Reference Types
+Assigning a closure to a variable/constant creates a reference. Two variables pointing to the same closure share state.
+
+### Escaping Closures (`@escaping`)
+A closure that outlives the function it's passed to (e.g., stored for async callback). Must be marked `@escaping`.
+```swift
+var completionHandlers: [() -> Void] = []
+func someFunctionWithEscapingClosure(completionHandler: @escaping () -> Void) {
+    completionHandlers.append(completionHandler)
+}
+```
+- Referencing `self` in an escaping closure risks a strong reference cycle.
+- Escaping closures cannot capture a mutable reference to `self` in structs/enums (value types don't allow shared mutability).
+  ```swift
+  struct SomeStruct {
+      var x = 10
+      mutating func doSomething() {
+          someFunctionWithNonescapingClosure { x = 200 }  // OK
+          someFunctionWithEscapingClosure { x = 100 }     // Error
+      }
+  }
+  ```
+
+### Autoclosures (`@autoclosure`)
+Wraps an expression in a closure automatically. Enables **lazy evaluation** — the expression isn't evaluated until the closure is called.
+```swift
+func assert(_ condition: @autoclosure () -> Bool,
+            _ message: @autoclosure () -> String = String(),
+            file: StaticString = #file, line: UInt = #line)
+```
+Key use: `&&`, `||` operators use autoclosures for short-circuit evaluation.
+
+## Enumerations, Structures and Classes, Methods, Subscripts, Inheritance, Deinitialization, Optional Chaining
+Skim or skip.
+
+## Initialization
+
+Assign initial values to stored properties and perform one-time setup.
+
+**Note**: Setting a default value or assigning in an initializer bypasses property observers.
+
+### Parameter Names and Argument Labels
+Same rules as functions. Default: label = parameter name. Use `_` to omit.
+```swift
+struct Celsius {
+    var temperatureInCelsius: Double
+    init(_ celsius: Double) { temperatureInCelsius = celsius }
+}
+let temp = Celsius(37.0)
+```
+
+### Default Initializers
+If all properties have defaults and no custom initializers exist, Swift provides a default (designated) initializer.
+
+### Memberwise Initializers (Structs)
+Structs without custom initializers get an auto-generated memberwise initializer. Properties with defaults can be omitted at the call site.
+```swift
+struct Size { var width = 0.0, height = 0.0 }
+let s = Size(width: 2.0, height: 2.0)
+let s2 = Size(height: 2.0) // width defaults to 0.0
+```
+Tip: Write custom initializers in an extension to keep the memberwise initializer.
+
+### Class Inheritance and Initialization
+
+| Type | Keyword | Delegation Rule | Purpose |
+|---|---|---|---|
+| Designated | None | Must delegate **up** (call super's designated init) | Full initialization |
+| Convenience | `convenience` | Must delegate **across** (call another init in same class) | Shortcut / defaults |
+
+**Initializer Delegation Rules**:
+1. Designated initializers must call a parent designated initializer.
+2. Convenience initializers must call another initializer from the same class.
+3. A subclass must initialize its own properties **before** calling `super.init()`.
+
+### Two-Phase Initialization
+
+- **Phase 1**: Each stored property is assigned an initial value, working up the class hierarchy. Until Phase 1 completes, `self` cannot be accessed.
+- **Phase 2**: Working down the hierarchy, each initializer may customize properties and call instance methods.
+
+```swift
+class Person {
+    var name: String
+    var age: Int
+    init(name: String, age: Int) {
+        self.name = name   // Phase 1
+        self.age = age     // Phase 1
+        self.greet()       // Phase 2 — now safe
+    }
+    convenience init() {
+        self.init(name: "Tom", age: 20)  // must delegate first
+        print(self.name)                  // Phase 2
+    }
+    func greet() { print("Hello, I'm \(name)") }
+}
+```
+
+### Initializer Inheritance and Overriding
+
+Swift subclasses **don't** inherit parent initializers by default.
+
+**Automatic initializer inheritance** (when subclass provides defaults for all new properties):
+- **Rule 1**: If subclass defines no designated initializers → inherits all parent designated initializers.
+- **Rule 2**: If subclass implements all parent designated initializers → inherits all parent convenience initializers.
+
+Overriding a parent designated initializer requires `override`. Overriding a parent convenience initializer does **not** (since subclasses can't call parent convenience initializers directly).
+
+If a subclass has no custom Phase 2 logic and the parent has a zero-argument designated init, `super.init()` is implicitly called.
+
+### Failable Initializers (`init?` / `init!`)
+Return `nil` on failure. The result is an optional type.
+```swift
+struct Animal {
+    let species: String
+    init?(species: String) {
+        if species.isEmpty { return nil }
+        self.species = species
+    }
+}
+```
+Enums with raw values get `init?(rawValue:)` automatically.
+
+You can override a failable initializer with a nonfailable one, but **not** vice versa.
+
+### Required Initializers (`required`)
+All subclasses must implement (or inherit). Subclass implementations use `required` (not `override`).
+```swift
+class Animal {
+    required init() { }
+}
+class Dog: Animal {
+    required init() { }
+}
+```
+
+### Initializer Summary Table
+
+| Type | Keyword | Delegation | Use Case |
+|---|---|---|---|
+| Designated | None | Up to parent | Primary init logic |
+| Convenience | `convenience` | Across in same class | Defaults / shortcuts |
+| Required | `required` | Per rules | Force subclass conformance |
+| Failable | `init?` / `init!` | Per rules | May return nil |
+| Default | None (auto) | N/A | Auto-generated when conditions met |
+
+## Properties
+
+### Property Wrappers
+
+A mechanism for **reusing property access logic** — syntactic sugar for shared `get`/`set` behavior.
+
+- Define with `@propertyWrapper` + `wrappedValue` property.
+- Optionally define `projectedValue` (accessed via `$` prefix).
+- Cannot be used on computed properties, global variables, or constants.
+- The compiler synthesizes a private `_propertyName` backing instance.
+
+```swift
+@propertyWrapper
+struct TwelveOrLess {
+    private var number = 0
+    var wrappedValue: Int {
+        get { number }
+        set { number = min(newValue, 12) }
+    }
+}
+
+struct SmallRectangle {
+    @TwelveOrLess var height: Int
+    @TwelveOrLess var width: Int
+}
+// Compiler generates: private var _height = TwelveOrLess(), etc.
+```
+
+**Setting initial values via init**:
+```swift
+@propertyWrapper
+struct SmallNumber {
+    private var maximum: Int
+    private var number: Int
+    var wrappedValue: Int {
+        get { number }
+        set { number = min(newValue, maximum) }
+    }
+    init() { maximum = 12; number = 0 }
+    init(wrappedValue: Int) { maximum = 12; number = min(wrappedValue, maximum) }
+    init(wrappedValue: Int, maximum: Int) { self.maximum = maximum; number = min(wrappedValue, maximum) }
+}
+
+@SmallNumber var x: Int              // uses init()
+@SmallNumber var y: Int = 1          // uses init(wrappedValue:)
+@SmallNumber(wrappedValue: 2, maximum: 5) var z: Int  // uses init(wrappedValue:maximum:)
+@SmallNumber(maximum: 9) var w: Int = 2               // uses init(wrappedValue:maximum:)
+```
+
+**Projected Value** (`$` prefix):
+```swift
+@propertyWrapper
+struct SmallNumber {
+    private var number: Int
+    private(set) var projectedValue: Bool
+    var wrappedValue: Int {
+        get { number }
+        set { if newValue > 12 { number = 12; projectedValue = true }
+              else { number = newValue; projectedValue = false } }
+    }
+    init() { number = 0; projectedValue = false }
+}
+
+struct SomeStructure { @SmallNumber var someNumber: Int }
+var s = SomeStructure()
+s.someNumber = 4;   print(s.$someNumber)  // false
+s.someNumber = 55;  print(s.$someNumber)  // true
+```
+
+**Real-world usage**: `@State`, `@Published`, `@AppStorage` in SwiftUI/Combine.
+
+## Error Handling
+See: [Swift Error Handling Notes](https://github.com/HaiTeng-Wang/Book/blob/master/iOS/Swift%20Error%20Handling%20%E7%AC%94%E8%AE%B0.md)
+
+## Concurrency
+
+Quick overview: [Guided Tour — Concurrency](https://doc.swiftgg.team/documentation/the-swift-programming-language/guidedtour#%E5%B9%B6%E5%8F%91%E6%80%A7)
+
+SwiftUI `.task` modifier.
+
+### Actor
+Isolated concurrent type — ensures only one task accesses mutable state at a time.
+
+- `@MainActor` — marks code that must run on the main thread.
+- `@GlobalActor` — custom global actor.
+
+### Sendable Types
+Types safe to share across concurrency domains. Conform to `Sendable` protocol (no code requirements, only semantic).
+
+Three ways a class can be Sendable:
+1. Value type with only Sendable stored properties.
+2. Immutable type with only Sendable read-only properties.
+3. Type with serialized access to mutable state (e.g., `@MainActor`, queue-protected).
+
+```swift
+struct TemperatureReading { var measurement: Int } // implicitly Sendable
+```
+
+## Macros
+TODO: Merge with home notes.
+
+## Type Casting, Nested Types, Extensions
+Skim or skip.
+
+## Protocols
+Skim the documentation.
+
+## Generics
+Skim the documentation.
+
+## Opaque Types and Boxed Protocol Types
+
+| | `some` (Opaque) | `any` (Boxed Protocol) |
+|---|---|---|
+| Dispatch | Static | Dynamic |
+| Return type | Must be one concrete type | Can be different concrete types |
+| Use case | Hide implementation detail, preserve performance | Heterogeneous collections, flexible returns |
+
+```swift
+// Opaque — always returns the same concrete type
+func getPet() -> some Animal { return Dog() }
+
+// Boxed protocol — can return different types
+func getPet(by color: Color) -> any Animal {
+    if color == .red { return Dog() } else { return Cat() }
+}
+```
+
+### Opaque Parameters
+`some` in parameter position is shorthand for generics:
+```swift
+func drawTwice(_ shape: some Shape) -> String { ... }
+// Equivalent to: func drawTwice<SomeShape: Shape>(_ shape: SomeShape) -> String { ... }
+```
+Each `some` parameter is an independent generic type.
+
+## Automatic Reference Counting (ARC)
+
+ARC tracks and manages memory for **class instances only**. Structs and enums are value types — not reference-counted.
+
+### Weak vs Unowned References
+
+Both break strong reference cycles.
+
+| | `weak` | `unowned` |
+|---|---|---|
+| Type | Optional (`?`) | Non-optional (implicitly unwrapped) |
+| When nil? | Becomes `nil` if deallocated | Crashes if accessed after deallocation |
+| Use when | Other instance may have shorter lifecycle | Other instance has same or longer lifecycle |
+
+**Common patterns**:
+- `weak`: delegate, escaping closures, tenant→apartment
+- `unowned`: closure capturing `self` (same lifecycle), credit card→customer
+
+```swift
+// weak — apartment may have no tenant
+class Apartment {
+    weak var tenant: Person?
+}
+
+// unowned — credit card always has an owner
+class CreditCard {
+    unowned let customer: Customer
+}
+```
+
+### Other Memory Leak Sources
+- **Timer**: RunLoop retains repeating timers. Call `invalidate()`.
+- **Notifications**: Block-based observers are retained by the system. Remove manually.
+- **Core Foundation objects**: Manual release required.
+- **UIWebView**: Deprecated, known memory issues.
+
+### Memory Leak Detection
+1. Breakpoint on `deinit`
+2. Xcode Debug Navigator — check instance count
+3. Instruments Leaks
+4. Static analysis
+5. Third-party libraries (swizzle VC pop + delayed weak check)
+
+## Memory Safety
+
+Access conflicts occur when:
+- At least one access is a write
+- They access the same memory
+- Their durations overlap
+
+Common cases:
+1. **In-Out parameter conflicts**: passing the same variable to multiple `inout` params, or reading a variable while it's an `inout` param.
+2. **Struct property conflicts**: overlapping write access to properties of a global struct variable. (Safe for local variables — compiler can prove non-overlap.)
+3. **Multithreading**: data races (not covered in Swift docs but important).
+
+## Access Control
+
+Four key points:
+
+1. **Access level hierarchy**: `open` → `public` → `package` → `internal` (default) → `fileprivate` → `private`
+   - `open`: only for classes/class members — allows subclassing/overriding outside the module.
+
+2. **Principle**: An entity cannot have a higher access level than its dependencies.
+   - A `public` variable cannot have an `internal` type.
+   - A function's access level ≤ its parameter/return types.
+   - A tuple's access level = most restrictive element.
+   - A subclass's access level ≤ its parent class.
+   - A `public` protocol cannot inherit from an `internal` protocol.
+
+3. **Setter access**: Use `private(set)`, `fileprivate(set)`, `internal(set)`, or `package(set)` to make a setter more restrictive than its getter.
+
+4. **Default member access for `public` types**: `internal`, not `public`. Must explicitly mark as `public`.
+   - Default initializer of a `public` type is `internal`.
+   - Required initializer access level cannot be lower than `internal` (for `public` classes).
+   - Struct memberwise initializer: if any stored property is `private`/`fileprivate`, the memberwise init matches that level.
+
+## Advanced Operators
+Omitted.
+
+## Attributes
+
+### resultBuilder
+TODO — e.g., SwiftUI's `@ViewBuilder`.
+
+---
+
+# Extensions
+
+## `?` vs `!` in Swift
+
+| | `?` (Optional) | `!` (Implicitly Unwrapped Optional) |
+|---|---|---|
+| Declaration | Safe optional | Unsafe optional (auto-unwrap) |
+| Access | Requires unwrapping | Direct access; crashes if nil |
+| Default value | `nil` | `nil` |
+
+**Safe unwrapping**:
+```swift
+// if let / guard let
+if let name = optionalName { print(name) }
+// Nil-coalescing
+let display = name ?? "Default"
+// Optional chaining
+let count = name?.count  // nil if name is nil
+```
+
+**Force unwrap** (dangerous):
+```swift
+print(name!)  // crashes if nil
+```
+
+Other `?`/`!` scenarios:
+- `init?` — failable initializer
+- `as?` / `as!` — safe / forced type cast
+- Dictionary subscript returns `Optional`
+- `try?` / `try!` — safe / forced error handling
+- `@IBOutlet` uses `!` by default (guaranteed after `viewDidLoad`)
+
+Safe array subscript extension:
+```swift
+extension Array {
+    subscript(safe index: Int) -> Element? {
+        guard index >= 0 && index < count else { return nil }
+        return self[index]
+    }
+}
+```
+
+## Swift vs Objective-C
+
+| | Swift | Objective-C |
+|---|---|---|
+| Type safety | Static, strong typing | Dynamic, weak typing |
+| nil handling | `Optional` enforced by compiler | Messaging nil is OK; undefined behavior |
+| Value types | Structs, enums, COW | Mostly reference types |
+| Syntax | Modern — no header files, no semicolons, no brackets | C-based, verbose |
+| Flow control | `for-in`, `guard`, `defer`, pattern matching `switch` | Traditional `for`, `while` |
+| Memory | ARC (class instances) | ARC (class instances) + manual Core Foundation |
+| Runtime | Limited reflection | Full dynamic runtime (`objc_msgSend`, swizzling, KVC) |
+
+**Swift milestones**:
+- **2019 (Swift 5.0, iOS 13+)**: ABI stability. Combine framework. SwiftUI.
+- **2021 (Swift 5.5, iOS 15+)**: Concurrency (`async/await`, `Actor`, `@MainActor`).
+- **2023 (Swift 5.9, iOS 17+)**: Macros. `@Observable` replaces `ObservableObject`/`@Published`.
+- **2024**: Swift Testing framework (`@Test`, `@Suite`).
+
+## Class vs Struct
+
+| | Class | Struct |
+|---|---|---|
+| Type | Reference (heap, ARC) | Value (stack, COW) |
+| Inheritance | Yes | No |
+| `let` instance | `var` properties still mutable | All properties immutable |
+| `mutating` | N/A | Required for methods that modify self |
+| Identity | `===` (reference equality) | `Equatable` (value equality) |
+| Init | Designated + convenience | Auto memberwise init |
+| Deinit | Yes | No |
+| Memory leaks | Possible (cycles) | No (value type) |
+
+`mutating` keyword: required for struct methods that modify properties. Cannot be called on `let` instances.
+
+`nonmutating` keyword: marks a setter that doesn't modify the struct's storage (e.g., writing to `UserDefaults`).
+
+## View Controller Lifecycle
+
+**Push**: v2 `init` → `viewDidLoad` → v1 `viewWillDisappear` → v2 `viewWillAppear` → `viewWillLayoutSubviews` → `viewDidLayoutSubviews` → v1 `viewDidDisappear` → v2 `viewDidAppear`
+
+**Pop**: v2 `viewWillDisappear` → v1 `viewWillAppear` → v2 `viewDidDisappear` → v1 `viewDidAppear` → v2 `dealloc`
+
+**Modal**: v1 only calls `viewWillLayoutSubviews` / `viewDidLayoutSubviews` (no appear/disappear). v2 follows same lifecycle as push.
+
+```objc
+- (instancetype)init
+- (instancetype)initWithCoder:(NSCoder *)coder
+- (instancetype)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
+- (void)awakeFromNib
+- (void)loadView
+- (void)viewDidLoad
+- (void)viewWillAppear:(BOOL)animated
+- (void)viewWillLayoutSubviews
+- (void)viewDidLayoutSubviews
+- (void)viewDidAppear:(BOOL)animated
+- (void)viewWillDisappear:(BOOL)animated
+- (void)viewDidDisappear:(BOOL)animated
+- (void)dealloc
+```
+
+### Design Patterns
+TODO: Router, Framework, Module design.
+
+### Combine
+TODO.
+
+---
+
+
+# Swift 编程语言笔记
+以下是对
+[The Swift Programming Language (6.2.3)](https://doc.swiftgg.team/documentation/the-swift-programming-language) 做的快速阅读，笔记。
+
+## 基础知识、基本运算符、字符串和字符
+省略，可选过一眼文档
+
+## 集合类型
+Swift 提供了三种主要的 集合类型，分别是数组、集合和字典，用于存储值集合。
+ - 数组是有序的值集合。
+   - 数组 将相同类型的值存储在一个有序列表中。相同的值可以在数组中以不同位置多次出现。
+ - 集合是无序的唯一值集合。
+   - 集合 将相同类型的不同值存储在没有定义序列化的集合中。当项的顺序不重要，或者需要确保项只出现一次时，可以使用集合而不是数组。
+   - 一个类型必须是 可哈希的 才能存储在集合中
+     - Swift 的所有基本类型（如 `String`、`Int`、`Double` 和 `Bool`）默认都是可哈希的。
+     - 没有关联值的枚举 `case` 值默认也是可哈希的。
+     - 你可以通过让自定义类型遵循 Swift 标准库中的 `Hashable` 协议，将它们用作集合的值类型或字典的键类型。
+   - 访问和修改集合
+        ```swift
+            // 1. count
+            var favoriteGenres: Set = ["Rock", "Classical", "Hip hop"]
+            print("I have \(favoriteGenres.count) favorite music genres.") // 打印 “I have 3 favorite music genres.“
+
+            // 2. isEmpty
+            if favoriteGenres.isEmpty {
+                print("As far as music goes, I'm not picky.")
+            } else {
+                print("I have particular music preferences.")
+            }
+            // 打印 “I have particular music preferences.“
+
+            // 3. 添加insert
+            favoriteGenres.insert("Jazz")
+            // favoriteGenres 现在包含 4 项
+
+            // 4. remove
+            if let removedGenre = favoriteGenres.remove("Rock") {
+                print("\(removedGenre)? I'm over it.")
+            } else {
+                print("I never much cared for that.")
+            }
+            // 打印 “Rock? I'm over it.“
+
+            // 5. contains
+            if favoriteGenres.contains("Funk") {
+                print("I get up on the good foot.")
+            } else {
+                print("It's too funky in here.")
+            }
+            // 打印 “It's too funky in here.“
+
+            // 6. 遍历
+            for genre in favoriteGenres {
+                print("\(genre)")
+            }
+            // Classical
+            // Jazz
+            // Hip hop
+        ```
+    - 基本集合操作
+      - `intersection(_:)` 取两个集合的 “交集“
+      - `symmetricDifference(_:) ` 取两个集合的 ”差集“
+      - `union(_:)` 取两个集合的 ”所有“值
+      - `subtracting(_:)` 取不包含交集（共同值）的 ”子集”
+        ```swift
+            let oddDigits: Set = [1, 3, 5, 7, 9]
+            let evenDigits: Set = [0, 2, 4, 6, 8]
+            let singleDigitPrimeNumbers: Set = [2, 3, 5, 7]
+
+
+            oddDigits.union(evenDigits).sorted()
+            // [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+            oddDigits.intersection(evenDigits).sorted()
+            // []
+            oddDigits.subtracting(singleDigitPrimeNumbers).sorted()
+            // [1, 9]
+            oddDigits.symmetricDifference(singleDigitPrimeNumbers).sorted()
+            // [1, 2, 9]
+        ```
+    - 集合成员关系与相等
+        ```swift
+        let houseAnimals: Set = ["🐶", "🐱"]
+        let farmAnimals: Set = ["🐮", "🐔", "🐑", "🐶", "🐱"]
+        let cityAnimals: Set = ["🐦", "🐭"]
+
+        houseAnimals.isSubset(of: farmAnimals) // 判断一个集合的所有值是否包含在指定集合中
+        // true
+        farmAnimals.isSuperset(of: houseAnimals) // 判断一个集合是否包含指定集合中的所有值
+        // true
+        farmAnimals.isDisjoint(with: cityAnimals) // 判断两个集合是否没有共同的值
+        // true
+        ```
+ - 字典是无序的键值对关联集合。
+   - `Dictionary<Key, Value>` 值无序
+   - 每个值都与一个唯一键相关联，
+   - 字典 `Key` 类型必须遵循 `Hashable` 协议，这与集合的值类型相同。
+
+Swift 的数组、集合和字典类型是作为 泛型集合 实现的。
+
+Swift 的 `Array`、`Set`、`Dictionary` 类型与 `Foundation` 的 `NSArray` 、`NSSet`、`NSDictionary`类进行了桥接。
+
+## 控制流
+- `guard`: 理解为“当”字即可，当条件为真则执行`guard`语句后的代码，否则执行`else`的代码。可以用于提前退出，提高可读性。
+- `defer`: 你可以使用 `defer` 块编写代码，这些代码将在以后程序到达当前代码块的末尾时执行。
+   ```swift
+    var score = 1
+    if score < 10 {
+        defer {
+            print(score)
+        }
+        score += 5
+    }
+    // 输出 "6"
+   ```
+   - 如果在同一作用域中编写多个 `defer` 代码块，则先写的 `defer` 代码块中的代码后执行。
+   ```swift
+   if score < 10 {
+    defer {
+        print(score)
+    }
+    defer {
+        print("The score is:")
+    }
+    score += 5
+    }
+    // 输出 "The score is:"
+    // 输出 "6"
+   ```
+   - 它保证代码块在当前作用域（scope）结束前一定会被执行，无论你是通过 `return`、`break`、还是`throw` 直接运行到最后退出。
+    ```swift
+    // 1. 提前 Return（提前退出函数）, 即使函数提前返回，defer 依然会执行。
+        func exampleReturn() {
+            defer {
+                print("这句话总会打印（Return）")
+            }
+
+            print("准备返回")
+            return
+            print("这行不会执行")
+        }
+
+        exampleReturn()
+        // 输出顺序：
+        // 准备返回
+        // 这句话总会打印（Return）
+
+    // 2. 中断 For 循环（Break）, 在循环内部，即使使用 break 跳出循环，在跳出循环体之前，defer 也会被执行。
+        func exampleBreak() {
+            for i in 1...3 {
+                defer {
+                    print("  循环内 defer 执行，i = \(i)")
+                }
+
+                print("进入循环 i = \(i)")
+                if i == 2 {
+                    print("  i == 2，触发 break")
+                    break
+                }
+                print("  循环底部 i = \(i)")
+            }
+            print("循环结束")
+        }
+
+        exampleBreak()
+        // 输出顺序：
+        // 进入循环 i = 1
+        //   循环底部 i = 1
+        //   循环内 defer 执行，i = 1
+        // 进入循环 i = 2
+        //   i == 2，触发 break
+        //   循环内 defer 执行，i = 2
+        // 循环结束
+
+    // 3. 抛出错误（Throw）, 当函数抛出错误时，在错误被抛出、函数准备返回之前，defer 中的代码依然会运行。
+        enum MyError: Error {
+            case somethingWrong
+        }
+
+        func exampleThrow() throws {
+            defer {
+                print("这句话总会打印（即使抛出错误）")
+            }
+
+            print("准备抛出错误")
+            throw MyError.somethingWrong
+            print("这行不会执行")
+        }
+
+        do {
+            try exampleThrow()
+        } catch {
+            print("捕获到错误")
+        }
+        // 输出顺序：
+        // 准备抛出错误
+        // 这句话总会打印（即使抛出错误）
+        // 捕获到错误
+    ```
+   - 如果你的应用程序停止运行（如访问了坏内存、强制解包 `nil` 导致 `fatal error`），则延迟的代码不会执行。
+    ```swift
+        func exampleCrash() {
+            defer {
+                print("这句话不会打印") // 不会执行
+            }
+            fatalError("程序崩溃")
+        }
+    ```
+   - 总结一下，`defer` 非常适合用在需要保证成对的操作，解锁、释放手动分配的内存、打开和关闭底层文件、以及在数据库中开始和结束事务等。
+- 控制转移语句
+控制转移语句改变你代码的执行顺序，通过它可以实现代码的跳转。Swift 有五种控制转移语句：
+  - `continue`: `continue` 语句告诉一个循环体立刻停止本次循环，重新开始下次循环。
+  - `break`: `break` 语句会立刻结束整个控制流的执行。
+  - `fallthrough`: `fallthrough` 简单地使代码继续连接到下一个 `case` （或 `default`）中的代码.
+  - `return`：返回
+  - `throw`：抛出错误
+- 模式: 每个 `switch case` 都包含一个模式，指示哪些值与该 `case` 匹配。  
+你还可以将模式用作 `if` 语句的条件。代码如下所示：
+    ```swift
+    let points = [(10, 0), (30, -30), (-20, 0)]
+
+    for case (let x, 0) in points {
+        print("Found a point on the x-axis at \(x)")
+    }
+    // 打印 "Found a point on the x-axis at 10"。
+    // 打印 "Found a point on the x-axis at -20"。
+
+    for case let (x, y) in points where x == y || x == -y  {
+        print("Found (\(x), \(y)) along a line through the origin")
+    }
+    // 打印 "Found (30, -30) along a line through the origin"。
+    ```
+- Where: `case` 分支可以使用 `where` 从句来判断附加的条件。
+    ```swift
+    let yetAnotherPoint = (1, -1)
+    switch yetAnotherPoint {
+    case let (x, y) where x == y:
+        print("(\(x), \(y)) is on the line x == y")
+    case let (x, y) where x == -y:
+        print("(\(x), \(y)) is on the line x == -y")
+    case let (x, y):
+        print("(\(x), \(y)) is just some arbitrary point")
+    }
+    // 输出 "(1, -1) is on the line x == -y"
+    ```
+
+
+## 函数 
+可忽略，以下简单喽一眼即可。
+
+#### 函数的 定义(definition) ：
+- 定义函数时，您可以定义一个或多个有名字和类型的值，作为函数的输入，即 **形参**。
+- 您还可以选择性地定义某种类型的值作为函数执行结束时的输出，即函数的 **返回类型**。
+- 每个函数都有一个 **函数名**，它描述了函数执行的任务。要使用函数，您需要使用函数名“调用”该函数，并向其传递与函数形参类型相匹配的输入值（称为 **实参**）。函数的实参必须与函数形参表里的顺序一致。
+    ```swift
+    // 参数名：greet、形参：person: String、返回类型 String
+    func greet(person: String) -> String {
+        let greeting = "Hello, " + person + "!"
+        return greeting // 函数体内只有一行代码时，return 可以省略。 这里可以直接这样写 `"Hello, " + person + "!"`
+    }
+    // 实参：person: "Anna"
+    print(greet(person: "Anna"))
+    ```
+####  函数参数标签和参数名称  
+每个函数参数都有一个 参数标签（argument label） 和 参数名称（parameter name），默认情况下，函数参数使用参数名称来作为它们的参数标签。
+```swift
+func someFunction(firstParameterName: Int, secondParameterName: Int) {}
+someFunction(firstParameterName: 1, secondParameterName: 2)
+```
+#### 指定参数标签  
+在参数名之前写入参数标签，用空格隔开：
+```swift
+func someFunction(argumentLabel parameterName: Int) {}
+someFunction(argumentLabel: 10)
+
+func greet(person: String, from hometown: String) -> String {
+    return "Hello \(person)!  Glad you could visit from \(hometown)."
+}
+print(greet(person: "Bill", from: "Cupertino"))
+// 打印 "Hello Bill!  Glad you could visit from Cupertino."。
+```
+#### 省略参数标签  
+如果不需要参数的参数标签，请写一个下划线（`_`）来代替该参数的显式参数标签
+```swift
+func someFunction(_ firstParameterName: Int, secondParameterName: Int) {}
+someFunction(1, secondParameterName: 2)
+```
+#### 默认参数值
+```swift
+func someFunction(parameterWithoutDefault: Int, parameterWithDefault: Int = 12) {}
+someFunction(parameterWithoutDefault: 3, parameterWithDefault: 6) // parameterWithDefault is 6
+someFunction(parameterWithoutDefault: 4) // parameterWithDefault is 12
+```
+#### 可变参数
+接受零个或多个指定类型的值。
+```swift
+func arithmeticMean(_ numbers: Double...) -> Double {}
+arithmeticMean(1, 2, 3, 4, 5)
+```
+#### 输入输出参数
+```swift
+func swapTwoInts(_ a: inout Int, _ b: inout Int) {}
+swapTwoInts(&someInt, &anotherInt)
+```
+
+#### 函数类型
+```swift
+func addTwoInts(_ a: Int, _ b: Int) -> Int {}
+func multiplyTwoInts(_ a: Int, _ b: Int) -> Int {}
+// 这两个函数的类型都是 (Int, Int) -> Int，这可以理解为：“这个函数类型有两个 Int 型的参数并返回一个 Int 型的值”
+
+// 使用函数类型
+var mathFunction: (Int, Int) -> Int = addTwoInts
+print("Result: \(mathFunction(2, 3))")
+
+mathFunction = multiplyTwoInts
+print("Result: \(mathFunction(2, 3))")
+
+// 函数类型作为参数类型
+func printMathResult(_ mathFunction: (Int, Int) -> Int, _ a: Int, _ b: Int) {}
+printMathResult(addTwoInts, 3, 5)
+
+// 函数类型作为返回类型
+func stepForward(_ input: Int) -> Int { return input + 1 }
+func stepBackward(_ input: Int) -> Int { return input - 1 }
+func chooseStepFunction(backward: Bool) -> (Int) -> Int { return backward ? stepBackward : stepForward }
+```
+#### 嵌套函数
+```swift
+func chooseStepFunction(backward: Bool) -> (Int) -> Int {
+    func stepForward(input: Int) -> Int { return input + 1 }
+    func stepBackward(input: Int) -> Int { return input - 1 }
+    return backward ? stepBackward : stepForward
+}
+```
+
+## 闭包
+**闭包** 是可以在你的代码中传递和使用的独立功能块。闭包可以捕获和存储其所在上下文中任意常量和变量的引用。  
+闭包的三种形式
+- 全局函数是一个有名字但不会捕获任何值的闭包
+- 嵌套函数是一个有名字并可以捕获其封闭函数域内值的闭包
+- 闭包表达式是使用轻量级语法编写的匿名闭包，它们能够捕获其上下文中的值。
+
+### 闭包表达式
+闭包表达式语法的一般形式如下： 
+```swift
+{ (<#parameters#>) -> <#return type#> in
+<#statements#>
+}
+```
+
+闭包表达式可以风格简洁明
+以 `Sorted` 方法举例子：
+```swift
+@inlinable public func sorted(by areInIncreasingOrder: (Element, Element) throws -> Bool) rethrows -> [Element]
+```
+- 利用上下文推断参数和返回值类型
+    ```swift
+    // Swift 可以推断其参数的类型和返回的值的类型
+    reversedNames = names.sorted(by: { s1, s2 in return s1 > s2 } )
+    ```
+- 单表达式闭包的隐式返回（可以省略 `return` 关键字）
+    ```swift
+    reversedNames = names.sorted(by: { s1, s2 in s1 > s2 } )
+    ```
+- 简化参数名称
+    ```swift
+    reversedNames = names.sorted(by: { $0 > $1 } )
+    ```
+- 尾随闭包语法
+    ```swift
+    reversedNames = names.sorted() { $0 > $1 }
+    // 如果一个闭包表达式是函数或方法的唯一参数，并且把该表达式写作尾随闭包，则在调用函数或方法时，无需在函数名或方法名后编写一对括号 () 
+    reversedNames = names.sorted { $0 > $1 }
+    ```
+- 运算符方法
+  - 实际上有一种 更短 的方法来编写上面的闭包表达式。Swift 的 `String` 类型定义了关于大于运算符 （ `>` ） 的字符串实现方法，该方法具有两个 `String` 类型的参数，并返回一个 `Bool` 类型的值。这正好符合 `sorted(by:)` 方法所需的函数类型。因此，你可以直接传入大于运算符。
+  ```swift
+  reversedNames = names.sorted(by: >)
+  ```
+
+### 尾随闭包
+如果你需要将闭包表达式作为函数的最后一个参数传递给函数，则可使用 **尾随闭包** 语法（语法风格简明）。
+- 使用尾随闭包语法时，不用在函数调用过程中为第一个闭包声明参数名；
+- 如果一个闭包表达式是函数或方法的唯一参数，并且把该表达式写作尾随闭包，则在调用函数或方法时，无需在函数名或方法名后编写一对括号 `()`  
+    示例:
+    ```swift
+    func someFunctionThatTakesAClosure(closure: () -> Void) {
+        // 函数主体在这里
+    }
+
+    // 不使用尾随闭包的情况下，调用此函数的示例：
+    someFunctionThatTakesAClosure(closure: {})
+
+    // 使用尾随闭包，调用此函数的示例：
+    someFunctionThatTakesAClosure() {}
+
+    // 闭包表达式是函数或方法的唯一参数，无需在函数名或方法名后编写一对括号 () 
+    someFunctionThatTakesAClosure {}
+    ```
+    更多示例：`map、compactMap、flatmap、filter、reduce`
+    ```swift
+    // Sample:
+       // 1. map
+        var mapResult = [1, 2, 3].map{"\($0)"}
+
+        // 2.compatMap: 
+        mapResult.append("333fff")
+        print(mapResult.compactMap{Int($0)}) // compatMap will filter nul
+
+        // 3. flatMap: 
+        let numbers = [1, 2, 3, 4]
+        print(numbers.map { Array(repeating: $0, count: $0) })
+        // [[1], [2, 2], [3, 3, 3], [4, 4, 4, 4]]
+        print(numbers.flatMap { Array(repeating: $0, count: $0) })
+        // [1, 2, 2, 3, 3, 3, 4, 4, 4, 4] flatMap is equivalent to Array(s.map(transform).joined()).  
+        print(numbers.flatMap{ String($0)}) // at this time, same with map ["1", "2", "3", "4"]
+
+        // 4. filter
+        print([-1, 1, 2, 3].filter{ $0 < 0 }) // [-1]
+
+        // 5. reduce 和 reduce(into) 查看这里 https://github.com/HaiTeng-Wang/Book/blob/master/Demo/SwiftUIDemo/SwiftUIDemoTests/ArrayTests.swift
+    ```
+- 函数调用可以包含多个尾随闭包；
+  - 如果一个函数包含多个尾随闭包，函数调用时则默认会省略第一个尾随闭包的参数名。
+    ```swift
+    func loadPicture(from server: Server, completion: (Picture) -> Void, onFailure: () -> Void) {
+        if let picture = download("photo.jpg", from: server) {
+            completion(picture)
+        } else {
+            onFailure()
+        }
+    }
+    // 默认会省略第一个尾随闭包的参数名
+    loadPicture(from: someServer) { picture in
+        someView.currentPicture = picture
+    } onFailure: {
+        print("Couldn't download the next picture.")
+    }
+    ```
+### 值捕获
+闭包可以从定义它的环境上下文中 捕获 常量和变量。
+
+在 Swift 中，可以捕获值的最简单的闭包形式是嵌套函数，它编写在另一个函数体中。嵌套函数可以捕获其外部函数的任何参数，也可以捕获在外部函数中定义的任何常量和变量。
+```swift
+func makeIncrementer(forIncrement amount: Int) -> () -> Int {
+    var runningTotal = 0 
+    // 通过引用捕获可以确保当 makeIncrementer 函数调用结束时，runningTotal 和 amount 不会消失。
+    // Swift 也会负责被捕获变量涉及的所有内存管理工作，包括释放不再需要的变量。
+    func incrementer() -> Int {
+        runningTotal += amount
+        return runningTotal
+    }
+    return incrementer
+}
+
+let incrementByTen = makeIncrementer(forIncrement: 10)
+incrementByTen()
+// 返回值为 10
+incrementByTen()
+// 返回值为 20
+incrementByTen()
+// 返回值为 30
+
+// 如果你创建第二个增量器，它会有自己的独立的 runningTotal 变量引用：
+let incrementBySeven = makeIncrementer(forIncrement: 7)
+incrementBySeven()
+// 返回值为 7
+
+// 再次调用原来的增量器（ incrementByTen ）会继续增加它自己的 runningTotal 变量，而不会影响 incrementBySeven 捕获的变量：
+incrementByTen()
+// 返回值为 40
+```
+**注意：** 所以，如果将闭包赋值给类实例的属性，并且闭包通过引用实例或其成员来捕获该实例，则将在闭包和实例之间创建一个强循环引用。Swift 使用 **捕获列表** 来打破这些强循环引用。
+
+### 闭包是引用类型
+在上面的示例中，`incrementBySeven` 和 `incrementByTen` 是常量，但这些常量引用的闭包仍然能够递增它们捕获的 `runningTotal` 变量。这是因为函数和闭包是 **引用类型**。
+
+每当你将函数或闭包赋值给一个常量或变量时，你实际上是在将该常量或变量设置为对函数或闭包的 **引用**。
+
+这也意味着，如果将闭包分配给两个不同的常量或变量，则这两个常量或变量都引用同一闭包。
+
+```swift
+let alsoIncrementByTen = incrementByTen
+alsoIncrementByTen()
+// 返回值为 50
+
+
+incrementByTen()
+// 返回值为 60
+```
+
+### 逃逸闭包
+当闭包作为参数传递给函数，但是这个闭包在函数返回之后才被执行，该闭包被称为 **逃逸** 函数。(也就是说，函数的闭包参数，没有在函数的执行体内被调用，需要稍后调用)
+
+可以在参数的类型之前写入 `@escaping`，以表示这个闭包是允许逃逸的。（表示告诉编译器，这个参数是可以进行赋值使用。如果不用@escaping标识，直接进行赋值使用，**编译器会报错**）
+
+闭包逃逸的一种常见方式是将其存储在函数外部定义的变量中
+```swift
+var completionHandlers: [() -> Void] = []
+func someFunctionWithEscapingClosure(completionHandler: @escaping () -> Void) {
+    completionHandlers.append(completionHandler)
+}
+// 许多启动异步操作的函数会接受一个闭包作为完成处理器（completion handler）。这种函数在启动操作后就会返回，但闭包要等到操作完成后才会被调用——这就需要闭包逃逸，以便稍后调用。
+```
+**注意：** 在逃逸闭包中引用 `self` 时，如果 `self` 指向一个类的实例，就需要特别注意。在逃逸闭包中捕获 `self` 很容易意外创建强引用循环（如果逃逸闭包赋值给类的实例属性，同时在闭包内使用 `self`）。
+
+逃逸闭包不能捕获对结构或枚举的 `self` 的可变引用（结构体和枚举是值类型，不允许共享可变性）
+```swift
+struct SomeStruct {
+    var x = 10
+    mutating func doSomething() {
+        someFunctionWithNonescapingClosure { x = 200 }  // OK
+        someFunctionWithEscapingClosure { x = 100 }     // Error
+    }
+}
+```
+
+### 自动闭包
+- 是一种自动创建的闭包便利语法，让我们能够省略闭包的大括号`{}`，用一个普通的表达式来代替显式的闭包。  
+- 它不接受任何参数，当它被调用时，它返回包裹在其内部的表达式的值。
+- 自动闭包允许您延迟计算，因为在你调用这个闭包之前，内部代码不会运行。
+
+（一句话，当一个没有参数的闭包作为函数的参数时，可以使用`@autoclosure`关键字修饰。然后，函数调用时，这个参数直接写表达式即可，不用写大括号`{}`，从而允许我们以简单的语法，延迟执行该表达式，直到我们明确调用这个闭包。）
+
+表达式最终也是一个值，那为什么不直接传值？和直接传值不同，闭包具有**延迟性**， 自动闭包最重要的就是**语法简洁**以及**延迟求值**。（例如，求值过程是一个非常复杂的操作， 这样我们就可以不用先去求值，而可以选择性的决定是否调用这个闭包去拿值。）
+
+例子：Swift 中的 `&&` 和 `||` 运算符就利用了自动闭包的原理。在 `a && b` 中，如果 `a` 为 `false`，`b` 根本不会被求值。
+```swift
+func &&(left: Bool, right: @autoclosure () -> Bool) -> Bool {
+    if left {
+        // 只有当 left 为 true 时，才对 right 进行求值
+        return right()
+    } else {
+        // left 为 false，直接返回 false，right 表达式永远不会被执行
+        return false
+    }
+}
+
+// 使用时
+func dangerousOperation() -> Bool {
+    print("执行一个危险(或复杂)操作...")
+    return true
+}
+
+let shouldProceed = false
+// 因为 shouldProceed 是 false，dangerousOperation() 不会被执行
+let result = shouldProceed && dangerousOperation()
+// 打印： (无输出，因为 dangerousOperation 没执行)
+```
+
+官方例子 `assert` 函数，其 `condition` 参数仅在 Debug 版本中计算，而其 `message` 参数仅在 `condition` 为 `false` 时计算。
+```swift
+func assert(
+    _ condition: @autoclosure () -> Bool,
+    _ message: @autoclosure () -> String = String(),
+    file: StaticString = #file,
+    line: UInt = #line
+)
+
+assert(1 > 2, " 1 不大于 2")
+```
+## 枚举、结构体和类、方法、下标、继承、析构过程、可选链式调用（Optional Chaining）
+喽一眼或忽略即可
+
+## 构造过程
+设置类型中存储属性的初始值并执行一次性构造过程。
+
+**Note:** 当你为存储属性赋予默认值，或者在构造器中设置其值时，该属性的值会被直接设置，而不会触发任何属性观察器。
+
+### 形参命名和实参标签
+与函数和方法形参相同，构造形参可以同时具有在构造器内部使用的形参名称和在调用构造器时使用的实参标签。  
+如果你没有提供实参标签，Swift会为构造器的每个形参自动提供一个实参标签。
+```swift
+struct Color {
+    let red, green, blue: Double
+    init(red: Double, green: Double, blue: Double) {
+        self.red   = red
+        self.green = green
+        self.blue  = blue
+    }
+    init(white: Double) {
+        red   = white
+        green = white
+        blue  = white
+    }
+}
+```
+如果你不希望构造器的某个形参使用实参标签，可以使用下划线 (`_`) 来代替显式的实参标签来重写默认行为。
+```swift
+struct Celsius {
+    var temperatureInCelsius: Double
+    init(_ celsius: Double) {
+        temperatureInCelsius = celsius
+    }
+}
+let bodyTemperature = Celsius(37.0) // bodyTemperature.temperatureInCelsius 是 37.0
+```
+### 默认构造器(也叫隐式构造器。Swift 自动生成的构造器。)
+如果结构体或类为所有属性提供了默认值，又没有提供任何自定义的构造器，那么 Swift 会给这些结构体或类提供一个默认构造器(总是类中的指定构造器)。  
+类的默认构造器示例(结构体一样)：
+```swift
+class ShoppingListItem {
+    var name: String?
+    var quantity = 1
+    var purchased = false
+}
+var item = ShoppingListItem()
+```
+
+#### 结构体类型的成员逐一构造器
+如果结构体类型没有定义任何自定义构造器，它们会自动获得逐一成员构造器。  
+  - 如果你希望默认构造器、逐一成员构造器以及你自己的自定义构造器都能用来创建实例，可以将自定义的构造器写到扩展（extension）中，而不是写在值类型的原始定义中。    
+
+当你调用逐一成员构造器时，你可以省略任何具有默认值的属性。
+```swift
+struct Size {
+    var width = 0.0, height = 0.0
+}
+let twoByTwo = Size(width: 2.0, height: 2.0)
+let zeroByTwo = Size(height: 2.0)
+let zeroByZero = Size()
+```
+
+### 类的继承和构造过程
+类里面的所有存储型属性———包括所有继承自父类的属性——都必须在构造过程中设置初始值。
+
+Swift 为类类型提供了两种构造器来确保实例中所有存储型属性都能获得初始值，它们被称为指定构造器和便利构造器。
+
+####  指定构造器（Designated Initializers）
+- **定义：** 类的主要构造器，负责初始化所有属性并调用父类构造器（若存在继承）。
+- **特点：** 
+  - 每个类**至少有一个**指定构造器。
+  - 必须调用**直接父类**的指定构造器（向上代理）。
+- **用途：** 完成类的完整初始化过程。
+- **示例：**
+    ```swift
+    class Vehicle {
+        var wheels: Int
+        init(wheels: Int) { // 指定构造器
+            self.wheels = wheels
+        }
+    }
+    ```
+
+####  便利构造器（Convenience Initializers）
+- **定义：** 使用 `convenience` 关键字修饰的辅助构造器。
+- **特点：** 
+  - 必须**调用同类中的其他构造器**（最终必须代理到指定构造器）。
+  - 不能直接调用父类构造器。
+- **用途：** 提供快捷初始化方式（如设置默认参数、简化调用）。
+- **示例：**
+    ```swift
+    class Car: Vehicle {
+        var brand: String
+        init(brand: String, wheels: Int) { // 指定构造器
+            self.brand = brand
+            super.init(wheels: wheels)
+        }
+        
+        convenience init() { // 便利构造器
+            self.init(brand: "Unknown", wheels: 4) // 调用指定构造器
+        }
+    }
+    ```
+#### 构造器链规则
+1. **指定构造器**必须向上代理（调用父类指定构造器）。
+2. **便利构造器**必须横向代理（调用同类其他构造器，最终指向指定构造器）。
+3. 子类指定构造器必须在访问父类属性**前**完成本类属性初始化。
+
+#### 两段式构造过程
+Swift 中类的构造过程包含两个阶段。两段式构造过程的使用让构造过程更安全（可以防止属性值在初始化之前被访问），同时在整个类层级结构中给予了每个类完全的灵活性。
+
+- 第一个阶段，类中的每个存储型属性赋一个初始值。  
+  **阶段 1**
+    - 类的某个指定构造器或便利构造器被调用.
+    - 完成类的新实例内存的分配，但此时内存还没有被初始化.
+    - 指定构造器确保其所在类引入的所有存储型属性都已赋初值。存储型属性所属的内存完成初始化。
+    - 指定构造器切换到父类的构造器，对其存储属性完成相同的任务。
+    - 这个过程沿着类的继承链一直往上执行，直到到达继承链的最顶部。
+    - 当到达了继承链最顶部，而且继承链的最后一个类已确保所有的存储型属性都已经赋值，这个实例的内存被认为已经完全初始化。此时阶段 1 完成。
+- 第二阶段开始，它给每个类一次机会，在新实例准备使用之前进一步自定义它们的存储型属性。  
+  **阶段 2**
+  - 从继承链顶部往下，继承链中每个类的指定构造器都有机会进一步自定义实例。构造器此时可以访问 `self` 、修改它的属性并调用实例方法等等。
+  - 最终，继承链中任意的便利构造器有机会自定义实例和使用 `self`.
+```swift
+class Person {
+    var name: String
+    var age: Int
+    
+    // 指定构造器
+    init(name: String, age: Int) {
+        // self.greet() ❌ 这个调用会报错（'self' used in method call 'greet' before all stored properties are initialized）
+        // 第一阶段：初始化所有属性
+        self.name = name
+        self.age = age
+        
+        // 第一阶段完成，此时所有属性都已初始化
+        
+        // 第二阶段：可以进一步定制实例（调用方法、修改属性等）
+        self.greet()
+    }
+
+    convenience init() {
+        // print(self.name) ❌ 这里调用会报错（'self' used before 'self.init' call or assignment to 'self'）
+        self.init(name: "Tom", age: 20)
+        print(self.name)
+    }
+    
+    func greet() {
+        print("Hello, I'm \(name), \(age) years old")
+    }
+}
+
+class Student: Person {
+    var studentId: String
+    var grade: Int
+    
+    // 指定构造器
+    init(name: String, age: Int, studentId: String, grade: Int) {
+        // 第一阶段：初始化子类新增的属性
+        self.studentId = studentId
+        self.grade = grade
+        
+        // 第一阶段上半部分完成，此时子类属性已初始化
+        
+        // 必须向上委托调用父类构造器
+        // ❌ 如果👇🏻这行代码被注释掉，会报错（'super.init' isn't called on all paths before returning from initializer）
+        super.init(name: name, age: age)
+        
+        // 第一阶段完成（父类和子类的所有属性都已初始化）
+        
+        // 第二阶段：可以进一步定制实例
+        self.displayInfo()
+    }
+    
+    func displayInfo() {
+        print("Student ID: \(studentId), Grade: \(grade)")
+    }
+}
+```
+
+#### 构造器的继承和重写
+跟 Objective-C 中的子类不同，Swift 中的子类未满足“自动继承规则情况”下不会继承父类的构造器。Swift 的这种机制可以防止一个父类的简单构造器被一个更精细的子类继承，而在用来创建子类的新实例时没有完全或错误被初始化。
+
+类的构造器自动继承规则: 子类中引入的所有新属性都提供了默认值
+- 规则1：如果子类没有定义任何指定构造器，会自动继承父类的所有指定构造器
+    ```swift
+    class Vehicle {
+        var numberOfWheels: Int
+        
+        // 指定构造器
+        init() {
+            numberOfWheels = 0
+        }
+        
+        // 另一个指定构造器
+        init(wheels: Int) {
+            numberOfWheels = wheels
+        }
+    }
+
+    class Bicycle: Vehicle {
+        // 没有定义任何指定构造器
+        var hasBasket = false
+    }
+    ```
+- 规则2：如果子类提供了所有父类指定构造器的实现，会自动继承父类的便利构造器
+    ```swift
+    class Food {
+        var name: String
+        
+        // 指定构造器
+        init(name: String) {
+            self.name = name
+        }
+        
+        // 便利构造器
+        convenience init() {
+            self.init(name: "[未命名]")
+        }
+    }
+
+    class RecipeIngredient: Food {
+        var quantity: Int
+        
+        // 覆盖父类的指定构造器
+        override init(name: String) {
+            self.quantity = 1
+            super.init(name: name)
+        }
+    }
+    ```
+
+当你在编写一个和父类中指定构造器相匹配的子类构造器时，实际上是在重写父类的这个指定构造器，需使用`override` 修饰符。即使你重写的是系统自动提供的默认构造器，也需要带上 `override` 修饰符。
+```swift
+class Vehicle {
+    var numberOfWheels = 0
+    var description: String {
+        return "\(numberOfWheels) wheel(s)"
+    }
+}
+class Bicycle: Vehicle {
+    override init() {
+        super.init()
+        numberOfWheels = 2
+    }
+}
+class Hoverboard: Vehicle {
+    var color: String
+    init(color: String) {
+        self.color = color
+        // 如果子类的构造器没有在阶段 2 过程中做自定义操作，并且父类有一个同步、无参数的指定构造器，你可以在所有子类的存储属性赋值之后省略 super.init() 的调用。
+        // super.init() 在这里被隐式调用
+    }
+    override var description: String {
+        return "\(super.description) in a beautiful \(color)"
+    }
+}
+```
+相反，如果你编写了一个和父类便利构造器相匹配的子类构造器，由于子类不能直接调用父类的便利构造器（每个规则都在上文doc:类的构造器代理规则有所描述），你不需要加 `override` 修饰符。
+
+### 可失败构造器
+- **定义：** 允许返回 `nil` 的构造器（使用 `init?` 或 `init!`）。
+- **用途：** 处理初始化可能失败的情况（如无效参数）。
+- **示例：** 
+    ```swift
+    struct Animal {
+        let species: String
+        init?(species: String) {
+            if species.isEmpty { return nil }
+            self.species = species
+        }
+    }
+    let someCreature = Animal(species: "Giraffe") // someCreature 的类型是 Animal?, 而不是 Animal
+   ```
+    带原始值的枚举类型的可失败构造器
+    - 带原始值的枚举类型会自带一个可失败构造器 `init?(rawValue:)`
+    ```swift
+    enum TemperatureUnit: Character {
+        case kelvin = "K", celsius = "C", fahrenheit = "F"
+    }
+    let fahrenheitUnit = TemperatureUnit(rawValue: "F") // fahrenheitUnit 的类型是 TemperatureUnit?, 而不是 TemperatureUnit
+    ```
+重写一个可失败构造器
+- 你可以用子类的可失败构造器或非可失败构造器重写一个父类的可失败构造器。（Node: 但反过来不行，cannot override a non-failable initializer）
+    ```swift
+    class Document {
+        var name: String? // 该构造器创建了一个 name 属性的值为 nil 的 document 实例
+        init() {}
+        init?(name: String) { // 该构造器创建了一个 name 属性的值为非空字符串的 document 实例
+            if name.isEmpty { return nil }
+            self.name = name
+        }
+    }
+    class AutomaticallyNamedDocument: Document {
+        override init() {
+            super.init()
+            self.name = "[Untitled]"
+        }
+        override init(name: String) {
+            super.init()
+            if name.isEmpty {
+                self.name = "[Untitled]"
+            } else {
+                self.name = name
+            }
+        }
+    }
+    class UntitledDocument: Document {
+        override init() {
+            super.init(name: "[Untitled]")!
+        }
+    }
+    ```
+
+必要可失败构造器（Required Failable Initializers）
+- 结合 `required` 和 `init?`，子类必须实现该可失败构造器。
+
+### 必要构造器（Required Initializers）
+- **定义：** 在类中使用 `required` 关键字修饰的构造器。
+- **特点：**
+  - 子类必须实现该构造器（直接继承或重写）。
+  - 子类实现时也需添加 `required` 关键字（无需 `override`）。
+- **用途：** 确保所有子类都支持某个初始化路径（如协议约束或父类强制要求）。
+- **示例：**
+    ```swift
+    class Animal {
+        required init() { } // 父类声明必要构造器
+    }
+
+    class Dog: Animal {
+        required init() { } // 子类必须实现
+    }
+    ```
+### 构造器核心区别总结
+| 构造器类型 | 关键字 | 调用要求 | 适用场景|
+| :--- | :---- | :--- | :--- |
+| 指定构造器 | 	无 | 	必须调用父类指定构造器 | 	主要初始化逻辑
+| 便利构造器 | 	`convenience` | 	必须调用同类其他构造器 | 	简化初始化（默认值/快捷路径）
+| 必要构造器 | 	`required` | 	子类必须实现 | 	强制子类支持特定初始化
+| 可失败构造器 | 	`init?/init!` | 	可返回 `nil` | 	处理可能失败的初始化
+| 隐式构造器 | 	无（自动生成）| 	无 | 	简化代码（符合条件时自动生成）
+
+## 属性
+### 属性包装器
+属性包装器：是一种**属性复用的存取逻辑**。
+
+- 定义属性包装器：通过`@propertyWrapper`修饰一个结构体、枚举或类，并定义一个 `wrappedValue` 属性（大多数情况下我们把它设计为计算属性，核心实际上就是复用这个属性的`set` 和 `get`，当然它也可以是一个存储值。），可以通过`init`(构造器)为其修饰的属性设置初始值或其它选项（属性包装器所需的任何参数），还可以通过定义`projectedValue`(被呈现值)来提供额外功能的第二值(以美元符号 ($) 访问)。
+  - 提示：
+    - 计算变量、全局变量和常量不能使用属性包装器。
+    - 一个具有属性包装器的属性可以包含 `willSet` 和 `didSet` 块，但它不能覆盖编译器合成的 `get` 或 `set` 块（原因看👇🏻原理）。
+- 原理：
+  - 当我们给一个属性加上包装器时，编译器实际上会默认自动为每个使用了属性包装器的属性，创建一个私有的存储属性，这个私有的存储属性就是包装器实例，把被修饰属性的“实际存储”通过get和set的方式委托给包装器实例。如果有需要我们可以通过 `_` 来访问这个实例（访问级别为private）。
+- 本质上，它是一种语法糖，用于封装 `getter` 和 `setter `中重复的逻辑。(在没有属性包装器之前，如果我们想让每个属性都具有某种通用行为，我们需要在每个属性的 `getter` 和 `setter` 中重复编写相同的逻辑)。
+- 示例：
+  1. 定义 `TwelveOrLess` 属性包装器
+        ```swift
+        // 定义一个TwelveOrLess的属性包装器
+        @propertyWrapper
+        struct TwelveOrLess {
+            private var number = 0 // 私有变量存储被包装属性的值，以及初始值
+            // setter 确保新值不大于 12，而 getter 返回存储的值。（set get 写逻辑）
+            var wrappedValue: Int {
+                get { return number }
+                set { number = min(newValue, 12) }
+            }
+        }
+
+        // 使用
+        struct SmallRectangle {
+            @TwelveOrLess var height: Int
+            @TwelveOrLess var width: Int
+        }
+        var rectangle = SmallRectangle()
+        print(rectangle.height) // 打印 "0"。
+
+        rectangle.height = 10
+        print(rectangle.height) // 打印 "10"。
+
+        rectangle.height = 24
+        print(rectangle.height) // 打印 "12"。
+
+        // 原理：编译器实际上会默认生成如下代码（和附加宏类似，但属性包装器不是宏）：
+        struct SmallRectangle {
+            private var _height = TwelveOrLess()
+            private var _width = TwelveOrLess()
+            var height: Int {
+                get { return _height.wrappedValue }
+                set { _height.wrappedValue = newValue }
+            }
+            var width: Int {
+                get { return _width.wrappedValue }
+                set { _width.wrappedValue = newValue }
+            }
+        }
+        ```
+    2. 设置被包装属性的初始值以及其它选项（属性包装器所需的任何参数）
+        ```swift
+        // 示例：这里是 TwelveOrLess 的扩展版本，名为 SmallNumber，它定义了可以设置被包装属性的初始值和最大值的构造器：
+        @propertyWrapper
+        struct SmallNumber {
+            private var maximum: Int
+            private var number: Int
+
+            var wrappedValue: Int {
+                get { return number }
+                set { number = min(newValue, maximum) }
+            }
+
+            init() {
+                maximum = 12
+                number = 0
+            }
+            init(wrappedValue: Int) {
+                maximum = 12
+                number = min(wrappedValue, maximum)
+            }
+            init(wrappedValue: Int, maximum: Int) {
+                self.maximum = maximum
+                number = min(wrappedValue, maximum)
+            }
+        }
+
+        // 1. 当为属性应用包装器且未指定初始值时，Swift 使用 init() 
+        struct ZeroRectangle {
+            @SmallNumber var height: Int
+            @SmallNumber var width: Int
+        }
+        var zeroRectangle = ZeroRectangle()
+        print(zeroRectangle.height, zeroRectangle.width) // 打印 "0 0"。
+
+        // 2. 当为属性指定初始值时，Swift 使用 init(wrappedValue:)
+        struct UnitRectangle {
+            @SmallNumber var height: Int = 1
+            @SmallNumber var width: Int = 1
+        }
+        var unitRectangle = UnitRectangle()
+        print(unitRectangle.height, unitRectangle.width) // 打印 "1 1"。
+
+        // 3. 当在自定义特性后面的括号中写入参数时，Swift 使用 init(wrappedValue: Int, maximum: Int) 
+        struct NarrowRectangle {
+            @SmallNumber(wrappedValue: 2, maximum: 5) var height: Int
+            @SmallNumber(wrappedValue: 3, maximum: 4) var width: Int
+        }
+        var narrowRectangle = NarrowRectangle()
+        print(narrowRectangle.height, narrowRectangle.width) // 打印 "2 3"。
+
+        narrowRectangle.height = 100
+        narrowRectangle.width = 100
+        print(narrowRectangle.height, narrowRectangle.width) // 打印 "5 4"。
+
+        // 4. 当包含属性包装器参数时，还可以通过赋值指定初始值。
+        struct MixedRectangle {
+            @SmallNumber var height: Int = 1 // Swift 使用 init(wrappedValue:)
+            @SmallNumber(maximum: 9) var width: Int = 2 // Swift 使用 init(wrappedValue: Int, maximum: Int) 
+        }
+
+        var mixedRectangle = MixedRectangle()
+        print(mixedRectangle.height) // 打印 "1"。
+
+        mixedRectangle.height = 20
+        print(mixedRectangle.height) // 打印 "12"。
+        ```
+    3. 从属性包装器中呈现一个值  
+      - 除了被包装的值之外，属性包装器还可以通过定义被呈现值来提供额外功能的第二值。  
+      - 被呈现值的名称与被包装值相同，只是以美元符号 ($) 开头。  
+      - 属性包装器可以将任何类型的值作为其被呈现值。  
+      - 被呈现值具有与原始包装属性相同的访问控制级别。
+        ```swift
+        // 示例：下面的代码向 SmallNumber 结构体添加了一个 projectedValue 属性，用于跟踪属性包装器在存储新值之前是否调整了该新值
+        @propertyWrapper
+        struct SmallNumber {
+            private var number: Int
+            private(set) var projectedValue: Bool
+
+            var wrappedValue: Int {
+                get { return number }
+                set {
+                    if newValue > 12 {
+                        number = 12
+                        projectedValue = true
+                    } else {
+                        number = newValue
+                        projectedValue = false
+                    }
+                }
+            }
+
+            init() {
+                self.number = 0
+                self.projectedValue = false
+            }
+        }
+        struct SomeStructure {
+            @SmallNumber var someNumber: Int
+        }
+        var someStructure = SomeStructure()
+
+        someStructure.someNumber = 4
+        print(someStructure.$someNumber) // 打印 "false"。
+
+        someStructure.someNumber = 55
+        print(someStructure.$someNumber) // 打印 "true"。
+        ```
+
+使用示例：
+  - SwiftUI 中用于数据流管理的那些包装器（如 [@State、@ObservedObject](https://github.com/HaiTeng-Wang/Book/blob/master/Demo/SwiftUIDemo/SwiftUIDemo/ContentView.swift) 等）, 以及 `AppStorage` (如果不熟悉，自行调研) 等。
+  - Combine 中的 `@Published`(如果不熟悉，自行调研)
+  - 自定义示例：
+    1. 基础验证 - Email 格式验证
+        ```swift
+        @propertyWrapper
+        struct EmailValidation {
+            private var value: String = ""
+            private var isValid = false
+            
+            var wrappedValue: String {
+                get { value }
+                set {
+                    isValid = newValue.contains("@") && newValue.contains(".")
+                    value = newValue
+                }
+            }
+            
+            var projectedValue: Bool {  // 通过$符号访问
+                return isValid
+            }
+        }
+
+        struct UserRegistration {
+            @EmailValidation var email: String
+            
+            func validateForm() {
+                if $email {  // 通过$email访问isValid
+                    print("邮箱格式正确")
+                } else {
+                    print("邮箱格式错误")
+                }
+            }
+        }
+        ```
+    2. 基础验证 - 带验证的包装器（通过闭包初始化属性包装器，来验证属性是否符合某一特定格式）
+        ```swift
+        @propertyWrapper
+        struct Validated<T> {
+            private var value: T
+            private let validation: (T) -> Bool
+            
+            var wrappedValue: T {
+                get { value }
+                set {
+                    if validation(newValue) {
+                        value = newValue
+                    } else {
+                        print("⚠️ 验证失败: \(newValue) 不符合条件")
+                    }
+                }
+            }
+            
+            init(wrappedValue: T, _ validation: @escaping (T) -> Bool) {
+                self.validation = validation
+                self.value = wrappedValue
+            }
+        }
+
+        // 使用示例
+        struct Person {
+            @Validated({ $0 >= 0 && $0 <= 150 }) var age: Int = 0
+            @Validated({ $0.count >= 2 && $0.count <= 50 }) var name: String = ""
+            @Validated({ $0.contains("@") }) var email: String = ""
+        }
+
+        var person = Person()
+        person.age = 200      // ⚠️ 验证失败
+        person.name = "A"     // ⚠️ 验证失败
+        person.email = "abc"  // ⚠️ 验证失败
+
+        person.age = 25
+        person.name = "张三"
+        person.email = "zhangsan@example.com"
+        print(person.age)    // 25
+        ```
+    3. 数据处理 - 字符创处理包装器（去除字符串首尾空格）
+        ```swift
+        @propertyWrapper
+        struct Trimmed {
+            private var value: String = ""
+            
+            var wrappedValue: String {
+                get { value }
+                set { value = newValue.trimmingCharacters(in: .whitespacesAndNewlines) }
+            }
+            
+            init(wrappedValue: String) {
+                self.wrappedValue = wrappedValue
+            }
+        }
+
+        // 使用场景：用户输入、表单数据
+        struct UserInput {
+            @Trimmed var username: String
+            @Trimmed var email: String
+            @Trimmed var bio: String
+        }
+
+        let input = UserInput(
+            username: "  john_doe  ",
+            email: "  john@example.com  ",
+            bio: "  Hello World  "
+        )
+        print(input.username) // "john_doe"
+        ```
+    4. 数据转换与格式化 - @Formatted，自动格式化字符串（如日期、货币）。
+        ```swift
+        @propertyWrapper
+        struct Formatted {
+            private var storage: Date
+            private let formatter: DateFormatter
+
+            var wrappedValue: String {
+                formatter.string(from: storage)
+            }
+
+            init(wrappedValue: Date, format: String) {
+                self.storage = wrappedValue
+                self.formatter = DateFormatter()
+                self.formatter.dateFormat = format
+            }
+        }
+
+        // 使用
+        struct EventView {
+            @Formatted(format: "yyyy-MM-dd") var date: Date = Date()
+        }
+        ```
+    5. 本地化字符串
+        ```swift
+        @propertyWrapper
+        struct Localized {
+            private let key: String
+            var wrappedValue: String {
+                NSLocalizedString(key, comment: "")
+            }
+
+            init(_ key: String) {
+                self.key = key
+            }
+        }
+
+        // 使用
+        struct ContentView {
+            @Localized("welcome_message") var title: String
+        }
+        ```
+
+## 错误处理
+- 笔记：https://github.com/HaiTeng-Wang/Book/blob/master/iOS/Swift%20Error%20Handling%20%E7%AC%94%E8%AE%B0.md
+
+## 并发
+快速过一下可以看[这里](https://doc.swiftgg.team/documentation/the-swift-programming-language/guidedtour#%E5%B9%B6%E5%8F%91%E6%80%A7)。
+
+SwiftUI `.task` 属性修饰符
+
+#### Actor
+是什么？
+
+@MainActor
+@GlobalActor
+
+为什么？
+
+怎么做？
+
+#### 可发送类型
+对于可以被从一个并发域共享到另一个并发域的类型，被称作可发送类型。  
+例如，它可以在调用一个 `actor` 时被作为参数传递，或是作为一项任务的返回值返回。  
+- 可发送类型： 简单的值类型.  
+- 不可发送类型：一个包含了可变属性、但又没有添加串行访问保护的类.   
+
+你可以通过使一个类型遵循 `Sendable` 协议来将其标注为可发送的。这个协议并不包含任何代码要求，但是其包含了由 Swift 强制实施的语义要求。总的来说，有三种方式能让一个类变得可发送：
+- 这个类型是一个值类型，并且它的可变状态仅由其它的可发送数据构成 —— 比如，一个只包含可发送属性的结构体，或是一个只包含可发送关联值的枚举。
+- 这个类型不包含任何可变状态，并且它的不可变状态只由其它的可发送数据构成 —— 比如，一个仅包含只读属性的结构体或类。
+- 这个类型包含能够保证其可变属性访问安全性的代码，比如一个被标注了 `@MainActor` 的类，或是一个通过队列 / 线程来对其属性增加了串行访问保护的类。
+
+下面这个版本的结构体隐式地遵从了 `Sendable` 协议：
+```swift
+struct TemperatureReading {
+    var measurement: Int
+}
+```
+
+## 宏
+TODO：等待和家里的笔记合并。
+
+## 类型转换、嵌套类型、扩展
+可忽略，或快速粗略过一下文档
+
+## 协议
+自己粗略过一下文档
+
+## 泛型
+自己粗略过一下文档
+
+## 不透明类型和封装协议类型  
+****不透明类型 (Opaque Types)****：使用 `some` 关键字修饰函数返回值为协议的类型，表示一个具体的类型但隐藏具体类型信息  
+特点：同一个函数总是返回相同的具体类型，不能 `if condition return A, else return B`  
+
+****协议封装类型 (Protocol Types)****：使用 `any` 关键字修饰函数返回值为协议的类型，可以包装任何遵守协议的类型  
+特点：可以包装不同的具体类型
+
+共同点：是 Swift 提供的两种隐藏值类型细节的方法，在隔离模块和调用模块的代码上，隐藏类型信息是有用的，因为这样返回值的底层类型可以保持私有。
+
+对比示例：
+```swift
+// 1. 返回类型限制
+protocol Animal {
+    associatedtype Food
+    func eat(_ food: Food)
+}
+
+struct Dog: Animal {
+    typealias Food = Bone
+    func eat(_ bone: Bone) { }
+}
+
+struct Cat: Animal {
+    typealias Food = Fish
+    func eat(_ fish: Fish) { }
+}
+
+// ✅ 不透明类型 - 静态派，总是返回相同类型
+func getPet() -> some Animal {
+    return Dog()
+}
+
+// ❌ 
+// func getPet(by color: Color) -> some Animal {  // 编译错误
+//    if color == .red {
+//        return Dog()
+//    } else {
+//        return Cat()
+//    }
+// }
+
+// ✅ 协议封装类型 - 类型灵活性，动态派发，可以返回不同类型
+func getPet(by color: Color) -> any Animal {  // 编译错误
+    if color == .red {
+        return Dog()
+    } else {
+        return Cat()
+    }
+}
+```
+
+### 不透明参数
+除了使用 `some` 来返回不透明类型外， 你也可以在函数、下标或构造器的参数类型中使用 `some`。 然而，当你在参数类型中使用 `some` 时， 它仅仅是泛型的简写语法，而不是不透明类型。 例如，下面的两个函数是等价的：
+```swift
+func drawTwiceGeneric<SomeShape: Shape>(_ shape: SomeShape) -> String {
+    let drawn = shape.draw()
+    return drawn + "\n" + drawn
+}
+
+
+func drawTwiceSome(_ shape: some Shape) -> String {
+    let drawn = shape.draw()
+    return drawn + "\n" + drawn
+}
+```
+如果你在多个参数的类型前都写了 `some`， 每个泛型类型都是独立的。
+```swift
+func combine(shape s1: some Shape, with s2: some Shape) -> String {
+    return s1.draw() + "\n" + s2.draw()
+}
+
+combine(smallTriangle, trapezoid)
+```
+
+## 自动引用计数
+Swift 使用 自动引用计数（`ARC`）来跟踪和管理应用的内存使用。引用计数只适用于类的实例。结构体和枚举是值类型，不是引用类型，它们不是通过引用存储和传递的。
+
+### 弱引用和无主引用
+都是为了避免所修饰的引用类型造成循环引用，其互相持有，导致引用计数都不为0，而没有被释放。产生内存泄露。  
+****不同之处：****
+- `weak`：`weak` 会相当于将所修饰的类型转换为可选类型。访问的时候需要可选访问，或对其进行可选绑定。当其修饰的示例可能先被释放，或者说，生命周期更短，且需要打破引用循环时，使用弱引用。  
+- `unowned`：`unowned` 会相当于将所修饰的类型转换为一定不为空的可选类型，访问的时候无需解包，但如果所修饰的类型为一但为`nil`，对其访问会 Crash！无主引用是在另一个实例具有相同或更长的生命周期时使用的，也就是说，当确定自己所引用类型实例生命周期一定比自己长，且需要打破引用循环时使用。
+
+****使用示例****  
+`unowned`
+1. **闭包作为类的实例属性，且闭包内访问了`self`**。(闭包是引用类型，`self->clouser clouser->self`) (也就是这里的 `asHTML` 例子。闭包内可用`unowned`捕获 `self`, 因为 `self` 和其属性**生命周期相同，同时释放**)
+    ```swift
+    class HTMLElement {
+        let name: String
+        let text: String?
+
+
+        // 定义懒加载的的闭包`() -> String` 属性。
+        lazy var asHTML: () -> String = {
+            // ✅ [unowned self] in 注意：要打破循环引用，这里是捕获列表，用unowned捕获self，因为 `asHTML`，是当前类型的属性，所以self一**定不会**先于属性释放，所以这里用unowned去弱引用self。（但是，一旦self**先释放**了，这时候再调用闭包会crash，因为闭包内使用了unowned self。例如：5s后调用这个闭包，但是在这之前self被释放了。这时候这里就会crash。这种情况就要注意了，要用weak了。）
+            if let text = self.text {
+                return "<\(self.name)>\(text)</\(self.name)>"
+            } else {
+                return "<\(self.name) />"
+            }
+        } // 这里没有`()`，所以意味着将闭包本身作为值赋值给了属性。
+
+
+        init(name: String, text: String? = nil) {
+            self.name = name
+            self.text = text
+        }
+
+
+        deinit {
+            print("\(name) is being deinitialized")
+        }
+    }
+
+    let heading = HTMLElement(name: "h1")
+    let defaultText = "some default text"
+    heading.asHTML = {
+        return "<\(heading.name)>\(heading.text ?? defaultText)</\(heading.name)>"
+    }
+    print(heading.asHTML())
+    paragraph = nil // ❌ 注意 HTMLElement 析构器中的消息没有被打印，这表明 HTMLElement 实例没有被释放
+    ```
+2. **信用卡和人**（两个类实例属性互相引用）：人也许会有一张信用卡(`strong`修饰可选信用卡)，每张信用卡**必然**有它的主人(`unowend`修饰比较适合)。
+    ```swift
+    class Customer {
+        let name: String
+        var card: CreditCard?
+        init(name: String) {
+            self.name = name
+        }
+        deinit { print("\(name) is being deinitialized") }
+    }
+
+
+    class CreditCard {
+        let number: UInt64
+        unowned let customer: Customer
+        init(number: UInt64, customer: Customer) {
+            self.number = number
+            self.customer = customer
+        }
+        deinit { print("Card #\(number) is being deinitialized") }
+    }
+
+    var john: Customer? = Customer(name: "John Appleseed")
+    john!.card = CreditCard(number: 1234_5678_9012_3456, customer: john!)
+    john = nil
+    // Prints "John Appleseed is being deinitialized".
+    // Prints "Card #1234567890123456 is being deinitialized".
+    ```
+3. **Country 和 City**（两个类实例属性互相引用，且始终都应该有值）无主引用和隐士解包可选引用。国家**必须始终有**一个首都(`strong` 修饰隐士解包可选引用)，每个城市**必须始终属性**一个国家(无主引用)。
+4. 无主可选引用示例（**Department 和 Course**）：一个系（department）拥有它的课程([Course])（保持强引用），每门课程(Course)都属于某个系的一部分（department 属性不是可选的，所以用`unowned`修饰），有些课程没有推荐的后续可nextCourse（所以用无主可选引用修饰 `unowned var nextCourse: Course?`）  
+
+(目前项目中，3. 4. 例子情况没遇到过，可不必深入，了解就好。主要掌握什么情况下会导致循环引用，`weak` vs `unowend` 即可）
+
+`weak`
+1. **租户和公寓**（两个类实例属性互相引用）：租户可能住在公寓里(`strong`修饰可选公寓)，公寓里也可能住着租户，同时公寓在其生命周期的某个时刻**可能没有**租户(`weak` 修饰比较适合)。
+    ```swift
+    class Person {
+        let name: String
+        init(name: String) { self.name = name }
+        var apartment: Apartment?
+        deinit { print("\(name) is being deinitialized") }
+    }
+
+
+    class Apartment {
+        let unit: String
+        init(unit: String) { self.unit = unit }
+        var tenant: Person? // weak var tenant: Person? 这里应该用weak修饰，公寓在其生命周期的某个时刻可能没有租户，所以在这种情况下，弱引用是打破引用循环的适当方式。
+        deinit { print("Apartment \(unit) is being deinitialized") }
+    }
+
+    john = Person(name: "John Appleseed")
+    unit4A = Apartment(unit: "4A")
+
+    john!.apartment = unit4A
+    unit4A!.tenant = john
+
+    john = nil
+    unit4A = nil
+    // 注意，当你将这两个变量设置为 nil 时，两个析构器都没有被调用，导致你的应用出现内存泄漏。解决方案，用weak 修饰 tenant（如上注释）。
+    ```
+2. **逃逸闭包**（提示：**可能先被释放**）
+3. **代理**（提示：**可能先被释放**）
+
+### 拓展
+其它会发生内存泄漏的情况
+- **Timmer**
+    ```swift
+    // 1. 如果以block的时候创建timer，同时timer作为强引用属性，同时在block里访问了self，这时候会产生循环引用环。
+    // 2(如下). repearts 为YES的时候，虽然当前类走了deallo方法，但是runloop会一直持有，定时器停不下来，Timer不会释放掉。（不要忘记调用 invalidate 方法）
+    NSTimer *timer = [NSTimer scheduledTimerWithTimeInterval:1 repeats:YES block:^(NSTimer * _Nonnull timer) {
+            NSLog(@"这里有定时器");
+        }];
+   [timer invalidate]; // 要在不需要使用timer的时，调用invalidate。
+    ```
+- **通知**
+    ```swift
+    @property(nonatomic) id observer;
+
+    self.observer = [[NSNotificationCenter defaultCenter] addObserverForName:@"需要手动移除" object:nil queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification * _Nonnull note) {
+        NSLog(@"sdfdfd");
+    }];
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"需要手动移除" object:nil];
+
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(通知方法) name:@"无需手动移除" object:nil];
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"无需手动移除" object:nil];
+
+    - (void)dealloc {
+        // iOS 9 以后，通知无需手动移除，但是block创建的通知需要手动移除。如果👇🏻代码被注释掉，虽然走了dealloc方法，但是再次进入vc的时候，会叠加发送通知。因为block这个API会导致观察者被系统retain。
+        [[NSNotificationCenter defaultCenter] removeObserver:self.observer name:@"需要手动移除" object:nil];
+    }
+    ```
+- **C 对象**（`CoreFoundation`）需要手动释放。
+- **`UIWebView` 不要用了（已经被官方废弃了），有爆内存问题。**
+
+内存泄漏检测方案：
+1. 断点 `deinit` 方法（好用）
+2. 通过 XCode 的 navigation debug board 看下 `VC`（或目标实例）个数是否为1，不为1证明有多个对象在内存中。（推荐，好用。 同时也可以清晰看到内存使用情况。）
+3. Instrument 的 Leaks（自测不好用，面板没有爆红色的X）
+4. 静态分析（自测不好用，检测不出来，工程大的情况下也不易检测，会有额外其它警告，例如变量声明没使用，子类未调用父类方法等）
+5. 使用一个三方Lib，例如：有的Lib会交换 `VC` 的 `pop` 方法，然后延迟三秒通过 `weak self` 调用方法，方法内可以弹窗或断言，如果 `VC` 未释放就好执行该方法。（视情况而用，没用过）
+
+
+
+## 内存安全（运行时或编译时会报错，知道就好，可忽略）
+内存访问冲突：当多个不同地方的代码试图访问同一块内存区域时，访问冲突就有可能出现。
+条件：
+- 它们不是都是读操作，也不是都是原子化操作。
+- 它们访问的是同一块内存区域。
+- 它们的时间窗口出现了****重叠****。
+
+示例(或注意点)：
+1. `In-Out` 参数的访问冲突  
+ - 往一个函数的 `in-out` 参数里传变量，并在这个函数执行体内读写访问这个变量
+    ```swift
+    var stepSize = 1
+    func increment(_ number: inout Int) {
+        number += stepSize // 对于 stepSize 的读访问与 number 的写访问重叠了
+    }
+    increment(&stepSize)
+    // 错误：stepSize 访问冲突
+    ```
+    以上代码会出现运行时错误（`Simultaneous accesses to 0x..., but modification requires exclusive access`）  
+    解决方案：显式地复制一份 `stepSize`
+    ```swift
+    // 显式复制
+    var copyOfStepSize = stepSize
+    increment(&copyOfStepSize)
+    // 更新原来的值
+    stepSize = copyOfStepSize
+    // stepSize 现在的值是 2
+    ```  
+
+ - 往同一个函数的多个 `in-out` 参数里传入同一个变量也会产生冲突
+    ```swift
+    func balance(_ x: inout Int, _ y: inout Int) {
+        let sum = x + y
+        x = sum / 2
+        y = sum - x
+    }
+    var playerOneScore = 42
+    var playerTwoScore = 30
+    balance(&playerOneScore, &playerTwoScore)  // OK
+    balance(&playerOneScore, &playerOneScore)
+    // 错误：playerOneScore 访问冲突
+    ```
+2. 属性访问冲突: 对一个存储在**全局变量中**的结构体的重叠写访问
+    - 结构体、元组、枚举这样的类型是由多个独立的值构成的（例如结构体的属性、元组的元素）。它们都是值类型，所以修改值的任何一部分都是对于整个值的修改。
+    以下示例，运行时会报错：`Thread 1: Simultaneous accesses to 0x102a24008, but modification requires exclusive access`
+        ```swift
+        struct Player {
+            var name: String
+            var health: Int
+            var energy: Int
+
+
+            static let maxHealth = 10
+            mutating func restoreHealth() {
+                health = Player.maxHealth
+            }
+        }
+        balance(&holly.health, &holly.energy)  // 错误
+        print(holly.health, holly.energy)
+
+        // 或者访问一个全局元祖类型的变量
+        var playerInformation = (health: 10, energy: 20)
+        balance(&playerInformation.health, &playerInformation.energy)
+        // 错误：对 playerInformation 的属性访问有冲突
+        ```
+    - 但，在实践中，大多数时候对于结构体属性的重叠访问是安全的。如果上方例子中的变量 holly 是一个本地变量而非全局变量，编译器可以证明对于该结构体的属性的重叠访问是安全的。
+3. 多线程（这个文档未提及，但也属于内存访问冲突点，有可能产生数据竞争的问题）
+## 访问控制
+记住以下四点即可：
+1. 访问级别排序：`open`（`open` 允许模块外的代码进行继承和重写，仅适用于类及类的成员） -> `public` -> `package`（允许实体被同一个应用或框架不同模块访问） -> `internal`（默认） -> `fileprivate` -> `private`
+
+2. 访问级别的指导原则：****实体的定义都不能依赖于访问级别更低（更严格）的其他实体****  
+- 例如:
+  - 一个 `public` 的****变量****，其类型的访问级别不能是 `internal`，`fileprivate` 或 `private`，因为在 `public` 变量被使用的地方，这些类型可能无法访问。
+  - ****函数****的访问级别不能高于它的参数类型和返回类型的访问级别，因为函数可能会在这些类型不可用的情况下被调用。
+  - ****元组****类型的访问级别是由元组中访问级别最严格的类型决定的。例如，你构建了一个包含两种不同类型的元组，其中一个是 `internal` 访问级别，另一个是 `private` 访问级别，那么这个元组的访问级别将是 `private`。
+  - ****枚举****也是，你不能在访问级别为 `internal` 的枚举中使用 `private` 类型作为原始值类型。
+  - ****子类****的访问级别不得高于父类的访问级别。例如，你不能写一个 `public` 的子类来继承 `internal` 的父类。
+    - 但是，通过重写可以给子类的成员提供更高的访问级别。（例如：类 `A` 是一个 `public` 类，它有一个 `fileprivate` 的方法 `someMethod()`。类 `B` 是 `A` 的子类，其访问级别降低为 `internal`。但是，类 `B` 将 `someMethod()` 的访问级别重写为 `internal`，其访问级别高于原来的访问级别）
+  - ****协议继承****，你不能定义一个继承自 `internal` 协议的 `public` 协议。
+    - 但是，协议遵循：一个类型可以遵循比其自身访问级别更低的协议。
+  - ****泛型类型或泛型函数****的访问级别取决于它本身的访问级别和其类型参数的类型约束的访问级别，最终由这些访问级别中的最低者决定
+  - *****类型别名*****，你定义的任何类型别名都被视为独立的类型。类型别名的访问级别不可以高于其表示的类型的访问级别。例如，一个 `private` 类型别名可以作为 `private、fileprivate、internal、public` 或 `open` 类型的别名。
+
+3. 常量、变量、属性和下标的 `getter` 和 `setter` 会自动获得与它们所属的常量、变量、属性或下标相同的访问级别。你可以为 `setter` 指定一个比对应 `getter` 更低的访问级别（你可以通过在 `var` 或 `subscript` 关键字之前写上 `fileprivate(set)、private(set)、internal(set)` 或 `package(set)` 来指定较低的访问级别）。
+
+4. `public` 类型的成员默认具有 `internal` 访问级别，而不是 `public`。如果你想让某个成员是 `public`，必须**显式**地将其指定为 `public`。这样可以确保公共 `API` 都是你经过选择才发布的，避免错误地将内部使用的接口公开。(例如：自定义类、结构体、嵌套类型、扩展)
+     - 构造器：
+        - 默认构造器：Swift 会为结构体和类自动生成一个不带参数的默认构造器，只要它们为所有存储型属性设置了默认初始值，并且未提供自定义的构造器。默认构造器的访问级别与它所初始化的类型相同，对于 `public` 类型，默认构造器的访问级别将为 `internal`。如果你想让 `public` 类型在另一个模块中可以通过无参数构造器进行初始化，则必须在类型定义中显式提供一个 `public` 访问级别的无参数构造器。
+        - 必要构造器（`required` 要求构造器）：必须具有与其所属类相同的访问级别( ❌ 文档这句话不对)。  
+        真正的规则：必要构造器的访问级别不能低于 `internal`，除非类是 `fileprivate` 或 `private` 的。因为 `required` 修饰符表要求所有该类的子类都必须实现该构造器，所以如果类的访问级别为`Public`，必要构造器的访问级别不能低于 `internal`。
+            ```swift
+            public class PublicClass {
+                // ✅ 可以 public
+                public required init(y: String) { }
+                
+                // ✅ 也可以internal
+                required init(x: Int) { }
+                
+                // ❌ 不能是 fileprivate 或 private。报错：'required' initializer must be accessible wherever class 'PublicClass' can be subclassed
+                fileprivate required init(z: Double) { }  // 错误
+            }
+            ```
+        - 结构体默认的成员逐一构造器：
+          - 对于结构体类型，如果结构体中的任何一个存储属性是 `private`，则默认的成员逐一构造器的为 `private`。同样，如果任何存储属性是 `fileprivate`，则默认的成员逐一构造器为 `fileprivate`。否则，默认的成员逐一构造器为 `internal`。
+          - 与前面提到的默认构造器一样，如果你想让 `public` 结构体类型在其他模块中可以通过成员逐一构造器进行初始化，则必须在类型定义中显式提供一个 `public` 的成员逐一构造器。
+
+     - 协议：如果你定义了一个 `public` 协议，那么在实现该协议时，协议的所有要求也需要具有 `public` 访问级别。这点与其他类型不同，在其他类型中，如果类型的访问级别是 `public`，通常意味着该类型的成员具有 `internal` 访问级别。
+
+## 高级运算符（略）
+
+## 特性
+
+### [resultBuilder](https://doc.swiftgg.team/documentation/the-swift-programming-language/attributes#resultBuilder)：(TODO)
+
+示例：`SwiftUI` 的 `@ViewBuilder`(TODO)
+
+# 拓展
+
+## Swift 中 `?` 和 `!` 的区别
+- Swift 为了内存安全，要求所有存储属性在初始化前必须有值，以避免访问属性时，其没有被初始化而导致内存访问崩溃（`BAD ACCESS`）。但某些时候我们需要一些属性一开始可能没有值（比如等待网络请求返回的数据），或者后续可能变为空。这时候就需要可选类型。 
+- 在 Swift 中，`?` 和 `!` 是处理 "可空类型（`Optional`）" 的符号，它们的核心区别在于是否允许其修饰的变量为空，以及对空值的处理方式不同。
+
+1. 定义变量时，`？`和 `!` 都是声明一个类型为可选类型，可以没有初始值，初始值默认为 `nil`。   
+ 区别：
+    - `?`：表示声明的属性表示**安全的可选类型**
+    - `!`：表示声明的属性为**隐式解包可选类型**（不安全的可选类型）。
+
+2. 使用变量时的区别（真正的区别在这里）
+  - 使用 `!` 修饰的变量，可以点语法直接调用，无需解包，**系统会自动帮我们做强制解包**，所以其值一但为`nil`，就会Crash。
+    ```swift
+    var nickname: String! = "John"
+    // 不需要写 nickname!，可以直接用
+    print(nickname.count) // 看起来像普通变量，但如果 nickname 是 nil，这里依然会崩溃
+    ```
+
+ - 使用 `?` 修饰的变量**需要解包**，才能拿到里面的值。
+   1. 安全解包（推荐）
+        ```swift
+        var name: String? = "张山"
+
+        // 1. if let 解包，或 guard let (可选绑定)
+        if let unwrappedName = name {
+            print("名字长度：\(unwrappedName.count)")
+        }
+
+        // 在不解包的情况下访问可选值的成员
+        // 2. 空合并运算符
+        let displayName = name ?? "默认名字"
+
+        // 3. 可选链
+        let nameCount = name?.count // 如果 name 是 nil，这行代码不会崩溃，nameCount 也变成 nil
+        ```
+   2. 强制解包（危险）：如果你确定变量一定有值，可以用 `!` 强制解包，但值一但为`nil`会`Crash`，慎用。
+        ```swift
+        var name: String? = "张山"
+        print(name!) // 输出：张山。但如果 name 是 nil，这行代码会直接崩溃！
+        ```
+
+关于可先类型的额外补充，在以下场景中也会出现可选类型，见到`？`或`!`号
+1. 可失败构造器，
+   - 以`init？`的形式声明构造器，返回的是一个当前类型的可选类型（`Self?`），必须解包后才能使用
+        ```swift
+        struct Person {
+            init?(id: String) {
+                if id.isEmpty { return nil }
+            }
+        }
+        let person = Person(id: "")  // person 的类型是 Person?，必须解包后才能使用
+        ```
+2. 类型转换 `as?` 和 `as!` 
+   - `as?`：安全转换，返回可选类型。转换成功返回可选值，失败返回 `nil`
+   - `as!`：强制转换，返回具体类型。失败直接崩溃
+   - `a`s：向上转换或桥接，不涉及可选类型
+        ```swift
+        let num = 3 as? Double        // num 是 Double? 类型
+        let str = "hello" as! String  // str 是 String 类型（不安全）
+        ```
+3. 字典值的访问
+    ```swift
+    let dict = ["key": "value"]
+    let value = dict["key"]   // value 是 String?（因为 key 可能不存在）
+    ```
+  - 须知道：数组下标访问不涉及可选类型。（据说是因为数组越界一直被视为严重错误，延续了 C/Objective-C 的思维方式，所以故意这么设计的，让开发者提早发现这个问题）
+     - 我们可以自己实现安全数组访问扩展，如下
+        ```swift
+        extension Array {
+            /// 安全的数组下标访问
+            /// - Parameter index: 要访问的索引
+            /// - Returns: 如果索引有效，返回对应的元素；否则返回 nil
+            subscript(safe index: Int) -> Element? {
+                // 检查索引是否在有效范围内
+                guard index >= 0 && index < count else {
+                    return nil
+                }
+                return self[index]
+            }
+        }
+
+        // 使用示例
+        let array = ["a", "b", "c"]
+
+        print(array[safe: 0])  // 输出：Optional("a")
+        print(array[safe: 2])  // 输出：Optional("c")
+        print(array[safe: 5])  // 输出：nil
+
+        // 配合可选绑定使用
+        if let element = array[safe: 1] {
+            print("获取到：\(element)")  // 输出：获取到：b
+        }
+        ```
+4. [错误处理 `try`、`try?`、`try!`](https://github.com/HaiTeng-Wang/Book/blob/master/iOS/Swift%20Error%20Handling%20%E7%AC%94%E8%AE%B0.md)
+5. `@IBOutlet` 默认使用 `!`
+   - 因为 UIKit 的生命周期保证了它在 `viewDidLoad` 之后一定有值，为了代码简洁可以使用 `!`。但在你自己的数据模型中，不建议使用 !
+        ```swift
+        @IBOutlet weak var label: UILabel!  // 默认，也是常用方式
+        @IBOutlet weak var label: UILabel?  // 更安全的方式，但使用时需解包
+        ```
+
+## Swift VS OC
+Swift 
+1. 静态语言，安全，编译器可以提前发现和杜绝潜在错误，例如：
+   - `nil`的处理
+        - 初始化：Swift 所有非可选属性必须在初始化完成前有值，以及局部变量有初始值，OC属性和变量初始化无法给初始值同时也不强制要求初始值，默认为 `nil/0`， 同时也允许给nil对象发消息，灵活性增加，但也会导致代码问题不容易排查。
+        - Swift通过 `Optional` 类型显式标记"可能为空"，编译器强制处理 `nil` 情况。OC 随时可能访问到 `nil`。
+   - 强类型语言，类型明确，即使是 `Any`，使用时必须类型检查为类具体类型后使用。OC 是弱类型语言，类型不匹配编译器会有警告不会报错，如果继续使用的话，会产生非预期行为或 Crash。
+        ```swift
+        // ⚠️ Swift 类型安全
+
+        // Swift中必须指定类型
+        var x = "Hello, World"      // 编译器推断为String
+        print(x)                    // 正常打印
+
+        x = 42                      // ❌ 编译错误：Cannot assign value of type 'Int' to type 'String'
+
+        // 如果想存不同类型，必须明确声明
+        var y: Any = "Hello"        // 显式声明为Any
+        y = 42                      // ✅ 可以，因为Any接受任何类型
+        // 但使用时必须类型检查
+        if let str = y as? String { // 安全类型转换
+            print(str.count)
+        }
+        ```
+        ```swift
+        // ⚠️ OC 类型不安全
+        - (NSInteger)addA:(NSInteger)a b:(NSInteger)b {
+            return a + b;
+        }
+        - (void)viewDidLoad {
+            [super viewDidLoad];
+            
+            NSString *str = @"10";
+            NSInteger result = [self addA:5 b:str]; // ⚠️ 这里会有警告
+            NSLog(@"%ld", result); // 这里不会Crash，会打印 4314580213 莫名的数字。发生了想不到的结果，类型错误，逻辑不好排查。
+            
+            str = @199; // ⚠️ 这里会有警告 Incompatible pointer types assigning to 'NSString *' from 'NSNumber *'
+            NSLog(str); // ❌  这里会有崩溃。reason: '-[__NSCFNumber _fastCStringContents:]: unrecognized selector sent to instance
+        }
+        ```
+   - 引入了结构体和枚举这类值类型，同时大部分数据类型被设计为值类型（例如：`String、 Array、 Dictional`）以及COW机制，提高性能的同时，也减少源实例对象被意外修改和释放所导致的非预期行为；
+     
+2. 语法现代
+   - 语言特性多（协议、枚举、拓展、元祖、泛型、嵌套函数、嵌套类型等），语法简洁（只有.swift文件，不用写中括号以及代码尾巴的分好）；
+   - 可以函数式编程，支持高阶函数、闭包捕获列表等，写链式调用非常舒服。
+   - 流程控制
+     - OC 只有传统的 `for、while`
+     - Swift 有 `for-in、guard`（提前返回）、`defer`（延迟执行）、强大的 `switch`（支持模式匹配）
+
+3. Swift 2014 年推出的，趋势，官方推荐
+   - 不断演进新框架或特性：
+     - **2019年：Swift 5.0，iOS 13+ —— ABI 稳定**，同时Swift运行时被整合进苹果的操作系统（iOS/macOS 等), Swift 5 以后编译的 App 不再需要把标准库打包进安装包，显著减小了 App 体积。
+       - **Combine** 框架同时诞生，Combine 是一个响应式编程框架，通过（`Publisher/Subscriber`）来处理随时间变化的值，为处理异步数据流提供了官方标准。它深刻影响了后续 SwiftUI 和 Concurrency 的设计方向。
+       - **SwiftUI** 框架同时诞生，声明式UI。
+     - **2021年：Swift 5.5，iOS 15+ —— 正式引入 Swift Concurrency（语言特性）**，有效避免回调地狱。
+       - `async/await`：让异步代码的写法和阅读像同步代码一样直观。我们不再需要在网络请求完成后的闭包里写 `self?.tableView.reloadData()`，而是像流水线一样从上到下执行。
+       - `Actor`：解决了多线程编程中数据竞争（Data Race）问题。`Actor` 通过对状态的隔离，自动确保在同一时间只有一个任务能访问可变状态，降低了加锁的复杂度和出错率。
+       - `@MainActor`：专门用于确保 UI 更新代码必须在主线程执行，避免了因忘记切换线程而导致的 UI 崩溃。
+     - **2023年：Swift 5.9 ，iOS 17+ —— 宏 Macros （语言特性）**
+       - 允许开发者编写在编译时展开的代码，从而消除大量重复的样板代码，同时保持代码的高性能。它是实现 @Observable 的基础。
+         - **@Observable** 宏，简化 SwiftUI 的数据绑定，它替代了旧版的 `ObservableObject` 协议和 `@Published` 属性包装器。优势：
+           - 更少的代码：不再需要 `class` 继承 `ObservableObject`，也不需要手动标记 `@Published`。
+           - 更好的性能：它不再是“对象整体变了”这种粗粒度的通知，而是通过宏在编译时精确插桩，实现“哪个属性变了就刷新哪部分视图”的细粒度更新。
+        - **2024 年推出 Swift Testing 框架**，它旨在替代已经存在多年的 `XCTest`。语法更现代，使用宏（如 `@Test、@Suite`）来标记测试。
+
+OC
+1. 稳，早起官方语言，基于C，大厂底层库或老App还是基于OC
+2. 动态性Runtime，方法的调用实际上是发送消息 (`objc_msgSend`)，类的创建、方法的添加，替换（`Swizzling`）都可以在运行时进行。
+   - 以及`KVC`：Swift属性声明用 `let` 或 `var`，不可变类型实例和可变类型实例简单，严谨，只读属性可通过访问修饰符`private(set)`修饰；OC属性声明使用`@property`关键字以及语义修饰符，虽然被声明`readOnly`，但是不会保证其只读性，仍可通过`KVC`修改。
+
+## Class VS Struct
+1. 值类型和引用类型
+    - 赋值：实例对象赋值的时候，Class传引用，Struct传值，Struct原实例属性修改不影响新实例对象；
+    - 内存管理：Class 采用 `ARC` 引用技术机制，每次创建一个类的新实例时，`ARC` 都会分配一块内存（堆区）来存储该实例的信息。这块内存保存了实例的类型信息，以及与该实例相关的所有存储属性的值，Struct 存储（栈区）。 
+      - 栈区的运⾏效率更⾼；
+      - 不⽤担⼼内存泄露；
+      - 详细可参考[这里](https://github.com/ChenYilong/iOSInterviewQuestions/blob/master/02_Swift_interview_questions/theory.md#what-is-the-difference-between-a-struct-and-a-class-in-swift)
+2. 类型特性（或者使用上区别）
+    - Class 可以继承，Struct 没有继承；
+    - 可变性：如果Class 或 Struct 的实例对象被声明为 `let`（常量），Class 实例属性（`var` 变量）可以被修改，Struct 不可被修改，编译器会报错；
+        - `mutation` 关键字：Struct 值类型，默认不可变，如果成员方法或变量属性的 `setter` 方法修改自身成员变量，需要使用 `mutation` 关键字。
+          - 请注意，你不能在结构体类型的常量上调用 mutating 方法，因为其属性不能被改变，即使它们是可变属性。
+            ```swift
+            struct Point {
+                var x = 0.0, y = 0.0
+                mutating func moveBy(x deltaX: Double, y deltaY: Double) {
+                    x += deltaX
+                    y += deltaY
+                }
+            }
+            let fixedPoint = Point(x: 3.0, y: 3.0)
+            fixedPoint.moveBy(x: 2.0, y: 3.0) // this will report an error "Cannot use mutating member on immutable value: 'fixedPoint' is a 'let' constant"
+            ```
+        - `nomutation` 关键字 
+            - 用来标记一个操作（标记在属性的`sttter`），告诉编译器不会修改其所属对象的内部状态，这样允许我们在一个不可变的常量（用 `let` 声明）Struct 实例上，调用那些实际上并不修改该常量内部存储的操作。示例：
+            ```swift
+            struct Storage {
+                var userName: String? {
+                    get {
+                        return UserDefaults.standard.string(forKey: "userNameKey")
+                    }
+                    // 问题来了：这里隐含着 “修改 Storage 自身” 的意图
+                    set { // 加上 nonmutating 关键字，// ✅ 编译通过！因为 set 被标记为 nonmutating
+                            UserDefaults.standard.set(newValue, forKey: "userNameKey")
+                        }
+                    }
+                }
+                let storage = Storage() // 用 let 声明一个常量
+                storage.userName = "新名字" // ❌ 编译错误！
+            ```
+    - 判断两个实例对象是否相等
+      - Class 有默认的 `===`，可以进行恒等判断，可以判断两个常量或变量是否引用了同一个实例;
+      - Struct 可以通过 `equatable` 协议，进行相等判断。
+    - 初始化上：Class 有指定初始化器，和便利初始化器，Struct有默认的**逐一成员初始化器**。Class 有 `deinit` 析构方法。
+ 
+## 视图控制器声明周期和调用顺序
+导航
+- `Push` 的时候: v2 `init` 一直到 `viewDidLoad`，然后 -> v1 `viewWillDisappear` -> v2 `viewWillAppear` -> `viewWillLayoutSubviews` -> `viewDidLayoutSubviews` -> v1 `viewDidDisappear` -> v2 `viewDidAppear`（记住“选择合适的`init()`，以及注意是`xib` 还是 `code` 形式初始化的`VC`?， 如果是 `xib` 则会调用`awakeFromNib`方法)，然后 `lodView`, `ViewDidLoad`，然后**先消失后出现原则**”）
+- `pop`的时候， v2 `viewWillDisappear` -> v1 `viewWillAppear` -> v2 `viewDidDisappear` -> v1 `viewDidAppear` -> v2 `dealloc` （记住“**先消失后出现原则**”）
+
+模态
+- 无论是 v1 `present` to v2，还是 v2 `dismiss`，v1 只会调用 `viewWillLayoutSubviews`，`viewDidLayoutSubviews` 且会调用多次，v1 的 `willAppear` 和 `DidAppear` 以及 `willDisAppear 和 `DidDissAppear` 不会调用；
+- v2 的生命周期和调用顺序 和 `push、 pop` 一样，也是 `init` -> 到 `viewDidAppear`这些（但调用顺序略有不同，`viewWillLayoutSubviews`，`viewDidLayoutSubviews` 会调用多次）。
+
+```swift
+- (instancetype)init{
+    self = [super init];
+    return self;
+}
+
+- (instancetype)initWithCoder:(NSCoder *)coder {
+    self = [super initWithCoder:coder];
+    return self;
+}
+
+- (instancetype)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
+    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
+    return self;
+}
+
+- (void)awakeFromNib {
+    [super awakeFromNib];
+}
+
+- (void)loadView {
+    [super loadView];
+}
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+}
+
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+}
+
+- (void)viewWillLayoutSubviews {
+    [super viewWillLayoutSubviews];
+}
+
+- (void)viewDidLayoutSubviews {
+    [super viewDidLayoutSubviews];
+}
+
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+}
+
+- (void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
+}
+
+- (void)viewDidDisappear:(BOOL)animated {
+    [super viewDidDisappear:animated];
+}
+
+- (void)dealloc {}
+```
+
+### 设计模式
+#### 实践
+如何设计一个功能，Router? 框架？模块？
+工具：通用结果页
+JSAPI拦截
+UIComponnet
+PageSegment
+
+### Combine
+
+### 遇到的难点？挑战？
+
