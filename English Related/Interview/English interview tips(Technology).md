@@ -106,16 +106,16 @@ d.) Deinit Method Check
 Other notes: Besides memory leaks, there are other situations that increase memory usage.
   - `imageWithName`: loads images into RAM. For large images or images that are not frequently used, we can use `imageWithContentsOfFile` API instead:.
   - Avoid creating too many singletons or static instances. They live forever with the app. Also, they make testing harder.
-  - Don't use UIWebView, It has poor performance It's deprecated by Apple. Use WKWebView instead.
+  - Don't use UIWebView, It has poor performance and deprecated by Apple. Use WKWebView instead.
 
 ### Week VS Unowend
 - Weak and unowned both break retain cycles without increasing reference counts.   
 - The main difference is that weak is optional — it becomes nil when the object is deallocated, so it's safe. Unowned is non-optional — it assumes the object always exists[ɪɡˈzɪst], so if we access it after deallocation, the app will crashes.  
-- Use weak for delegates and most cases. Use unowned only when we are absolutely sure the object lives as long as the reference, like two objects with the same lifetime.（A good example is a closure that is a property of self and captures self. The closure and self have the same lifetime — when self is deallocated, the closure is gone too. So [unowned self] is safe and more convenient because we don't need to write self?. every time. But we must be certain the closure will not outlive self）
+- Use weak for delegates and most cases. Use unowned only when we are absolutely sure the object lives as long as the reference, like two objects have the same lifetime.（A good example is a closure that is a property of self and captures self. The closure and self have the same lifetime — when self is deallocated, the closure is gone too. So [unowned self] is safe and more convenient because we don't need to write self? every time. But we must be certain the closure will not outlive self）
 
 
 
-## Multithreading And Concurrency
+## Multithreading And Data Race
 
 ### GCD VS OperationQueue
 - GCD is a low-level C API. It provides queue[kju] groups to execute[x,cute] asynchronous code in block. With GCD we can easily use shared local variables and easily perform thread communication through blocks. We can use GCD for simple background tasks, like network callbacks or file saving. GCD also has rich functions (eg: semaphores[ˈsɛməˌfɔr]、barriers for thread-safe, dispatch_once for singleton creation, etc).
@@ -142,7 +142,7 @@ Deadlock is a situation in multithreading where two or more threads are blocked 
 #### Situation:
 - A classic example is multiple locks acquired by threads in different orders, eg: when Thread A holds Lock 1 and waits for Lock 2, while Thread B holds Lock 2 and waits for Lock 1. Neither thread can release its lock because they are both waiting. This is sometimes called a 'deadly embrace'. ****How to Solve:**** We need always acquire locks in the same order in this situation. And it is best to request a new lock only after releasing the current lock.
 
-- Call sync on the same serial queue.（eg: If you're on the main queue and you call DispatchQueue.main.sync — that will deadlock immediately. Because the main queue is serial. You're trying to wait for a task to finish, but that task cannot start until the current one finishes. It's waiting for itself. That's a deadlock）****How to Solve:**** we should never call sync on the same serial queue that we're already on. This is the most common mistake in iOS. If we need to dispatch work on the same queue, use async instead.
+- Call sync func on the same serial queue.（eg: If you're on the main queue and you call DispatchQueue.main.sync func — that will deadlock immediately. Because the main queue is serial. You're trying to wait for a task to finish, but that task cannot start until the current one finishes. It's waiting for itself. That's a deadlock）****How to Solve:**** we should never call sync on the same serial queue that we're already on. This is the most common mistake in iOS. If we need to dispatch work on the same queue, use async instead.
 
 - Deadlock can also happen when a single thread tries to lock the same resource recursively — it's waiting for itself.（eg: if a function acquires a lock and then calls itself recursively — or calls another function that tries to acquire the same lock — the thread will wait for itself. That's a deadlock.）****How to Solve:**** We can use a recursive lock. In iOS, that's NSRecursiveLock. A recursive lock allows the same thread to lock the same resource multiple times. It keeps track of how many times the lock was acquired. As long as the number of unlocks matches the number of locks, the lock will eventually be released.
 
@@ -158,19 +158,33 @@ Deadlock is a situation in multithreading where two or more threads are blocked 
 - Spin Lock: A spin lock makes the thread spin in a loop instead of sleeping. It's only good when the lock is held for a very short time.
 
 
-### Concurrency
+## Concurrency
+Swift Concurrency is a modern asynchronous programming framework. We can use this framework if the project's minimum target is iOS 15 or later. Actually, it is based on multithreading. It provides a safer and more readable way to write concurrent code compared to `GCD` or `OperationQueue`.
 
-#### "Explain async/await 
-async/await provides a way to write asynchronous code in a more readable and maintainable way. It allows we to write asynchronous network requests without using callback closures, which helps avoid callback hell. 
+We can use `async/await` to write asynchronous code that looks synchronous, and create a `Task` to run async code from a synchronous context, like from a view controller. Tasks can be cancelled, we can check for cancellation inside the async work, and we can also set the priority for the Task. SwiftUI also provides the `Task` View Modifier to manage async work. Swift Concurrency uses `Actor` to protect shared data to avoid data races, Sendable for compile-time safety of shared data, And we also can use the `@MainActor` to execute code on the main thread.
 
-#### 并行
+It also provides `TaskGroup` and `async let` to support ****structured concurrency****. Through parent-child relationships, tasks can perform cooperative cancellation, child tasks inherit the parent task's priority by default, and child tasks can capture local variables from the parent scope.
 
-#### 结构化并发
+In summary, Swift Concurrency can make asynchronous code safer, simpler, and more readable, effectively avoiding callback hell.
+
+#### Task
+`Task` is actually a generic struct `Task<Success, Failure>` that contains two placeholder types, which are success and failure. And it is initialized with a trailing closure, within the closure we perform asynchronous work that eventually returns a specific success or failure value. Additionally, Task also provides configurations such as cancellability, suspendability, and priority. We can imagine it as an asynchronous executor that can create and manage asynchronous work within a synchronous context.
+
+##### `.task`(SwiftUI)
+`.task` is a SwiftUI view modifier used to start an asynchronous task when the view appears and automatically cancel the task when the view disappears. It supports setting the task priority and also supports an id parameter, which restarts the task when the id value changes.
+
+#### TaskGroup
+Swift Concurrency provides `withTaskGroup` to perform structured concurrent work. `withTaskGroup` is actually a global function that provides a `TaskGroup` instance through a trailing closure, allowing us to dynamically add and manage child tasks within the closure. For example, it can be used to concurrently download images while iterating over an array of URLs. In addition, Swift Concurrency also provides the `withThrowingTaskGroup` variant function, which is used in scenarios where child tasks may throw errors, And if any child task fails, the TaskGroup will automatically cancel the other tasks and throw the error upward.
 
 #### Actor
-- Main Actor
-- Global Actor
+- `@MainActor`
+- `Global Actor`
 
+#### Sendable
+
+#### Continuation
+Swift Concurrency provides the function `withCheckedContinuation`, which can bridge traditional closure callbacks to modern asynchronous functions. For example, if there is a legacy network library where data request results are returned in closures, we can wrap it into an async function using the Continuation function. Actualy, the Continuation function passes a Continuation instance through a trailing closure, and then we use this instance to call the resume method to deliver the result (success value or error).
+(Function differences:) Swift provides four global Continuation functions: `withCheckedContinuation`, `withCheckedThrowingContinuation`, and their corresponding `Unsafe` versions. Since a function can only return once, So when using Continuation, we must ensure that `resume` function can only be called once and that the result is passed only once. Based on this rule, the difference between Checked and Unsafe lies in runtime checks. The Checked function will verify whether we have correctly called resume function and will provide clear crash information and hints if there is an error, while the Unsafe version performs no checks. About the Throwing function, that can pass or throw an error through `resume(throwing:)` function.
 
 # Swift
 
