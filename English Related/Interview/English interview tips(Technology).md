@@ -158,32 +158,52 @@ Deadlock is a situation in multithreading where two or more threads are blocked 
 - Spin Lock: A spin lock makes the thread spin in a loop instead of sleeping. It's only good when the lock is held for a very short time.
 
 
+
 ## Concurrency
 Swift Concurrency is a modern asynchronous programming framework. We can use this framework if the project's minimum target is iOS 15 or later. Actually, it is based on multithreading. It provides a safer and more readable way to write concurrent code compared to `GCD` or `OperationQueue`.
 
-We can use `async/await` to write asynchronous code that looks synchronous, and create a `Task` to run async code from a synchronous context, like from a view controller. Tasks can be cancelled, we can check for cancellation inside the async work, and we can also set the priority for the Task. SwiftUI also provides the `Task` View Modifier to manage async work. Swift Concurrency uses `Actor` to protect shared data to avoid data races, Sendable for compile-time safety of shared data, And we also can use the `@MainActor` to execute code on the main thread.
+We can use `async/await` to write async code that looks synchronous, and create a `Task` to run async code from the sync context, like from a view controller. Tasks can be cancelled, we can check for cancellation inside the async work, and we can also set the priority for the Task. SwiftUI also provides the `Task` View Modifier to manage async work. Swift Concurrency uses `Actor` to protect shared data to avoid data race, Sendable for compile-time safety of shared data, And we also can use the `@MainActor` to execute code on the main thread.
 
-It also provides `TaskGroup` and `async let` to support ****structured concurrency****. Through parent-child relationships, tasks can perform cooperative cancellation, child tasks inherit the parent task's priority by default, and child tasks can capture local variables from the parent scope.
+It also provides `TaskGroup` and `async let` to support ****structured concurrency****. Through parent-child relationships, tasks can perform cooperative[koʊˈɑp(ə)rəˈdɪv] cancellation, child tasks inherit the parent task's priority by default, and child tasks can capture local variables from the parent scope.
 
-In summary, Swift Concurrency can make asynchronous code safer, simpler, and more readable, effectively avoiding callback hell.
+In summary, Swift Concurrency can make async code safer, simpler, and more readable, effectively avoiding callback hell.
 
 #### Task
-`Task` is actually a generic struct `Task<Success, Failure>` that contains two placeholder types, which are success and failure. And it is initialized with a trailing closure, within the closure we perform asynchronous work that eventually returns a specific success or failure value. Additionally, Task also provides configurations such as cancellability, suspendability, and priority. We can imagine it as an asynchronous executor that can create and manage asynchronous work within a synchronous context.
+`Task` is actually a generic struct `Task<Success, Failure>` that contains two placeholder types, which are success and failure. And it is initialized with a trailing closure, within the closure we perform async work that eventually returns a specific success or failure value. Additionally, Task also provides configurations such as cancellability, suspendability, and priority. We can imagine it as an async executor that can create and manage async work within a sync context.
 
 ##### `.task`(SwiftUI)
-`.task` is a SwiftUI view modifier used to start an asynchronous task when the view appears and automatically cancel the task when the view disappears. It supports setting the task priority and also supports an id parameter, which restarts the task when the id value changes.
+`.task` is a SwiftUI view modifier used to start an async task when the view appears and automatically cancel the task when the view disappears. It supports setting the task priority and also supports an id parameter, which restarts the task when the id value changes.
 
 #### TaskGroup
 Swift Concurrency provides `withTaskGroup` to perform structured concurrent work. `withTaskGroup` is actually a global function that provides a `TaskGroup` instance through a trailing closure, allowing us to dynamically add and manage child tasks within the closure. For example, it can be used to concurrently download images while iterating over an array of URLs. In addition, Swift Concurrency also provides the `withThrowingTaskGroup` variant function, which is used in scenarios where child tasks may throw errors, And if any child task fails, the TaskGroup will automatically cancel the other tasks and throw the error upward.
 
 #### Actor
+An actor is a reference type. It is similar to a class, except that it does not support inheritance. The main difference is that actors ensure data safety through data isolation. This is achieved by maintaining an internal serial queue.
+By default, to access an actor's method or mutable property from outside, we must use `await`.
+Actors also have nonisolated functions for operations that do not access mutable state, that can be called without await. For example, we can directly access an actor's constants from outside without `await`, or call a method marked as nonisolated. Of course, within a nonisolated method, we cannot access the isolated state.
+Inside the actor, all methods and properties, whether `isolated` or not, that can be accessed directly. But if we need to access across borders, for example, such as access another actor's mutable state from current actor's methods, await is still required.
+
+TODO:------
+(Tip:) When using an Actor, be careful. It's best not to manually start child threads within an Actor, as that will break the Actor's data safety guarantees and may cause data races. Also, pay attention to reentrancy.
+------
+
+(Note)Reentrancy: An actor ensures that only one task can modify its state at a time, but it does not ensure that asynchronous methods execute atomically. Reentrancy means that when an actor's asynchronous method is paused due to await, the thread is temporarily yielded, that will allow other tasks to enter the same method and interleave execution.
+Example: 
+A bank account has 100RMB and a withdrawal method. The withdrawal method first checks the balance, then asynchronously authorizes, and finally withdraws the money. Two tasks each try to withdraw 60RMB: Task A passes the balance check and then suspends (waiting for authorization), So at this time it will yield the current thread. In the meantime, Task B also enters and passes the balance check. Eventually, both authorizations succeed, so the balance has gone to minus 20RMB. How to Fix: Check the balance again before actually withdrawing the money. 
+
+##### Global Actors
+In Swift concurrency, A regular actor can only protect its own instance state. If multiple contexts need to access the same globally shared data, a Global Actor is required.
+A Global Actor is a singleton actor. All the code and data isolated by it are executed serially through this single instance.
+We can create a custom Global Actor with the @globalActor modifier. That type will conform to the GlobalActor protocol automatically to provide a shared static property as a shared instance. It is commonly used to protect global variables, static properties, and other data shared across contexts. We can mark a whole class or individual functions and properties with the global actor.
+
 - `@MainActor`
-- `Global Actor`
+   `@MainActor` is an important built-in global actor. It ensures that code runs on the main thread. In addition to `@MainActor`, we can also execute code on the main thread using the `MainActor.run` function.
 
 #### Sendable
 
 #### Continuation
 Swift Concurrency provides the function `withCheckedContinuation`, which can bridge traditional closure callbacks to modern asynchronous functions. For example, if there is a legacy network library where data request results are returned in closures, we can wrap it into an async function using the Continuation function. Actualy, the Continuation function passes a Continuation instance through a trailing closure, and then we use this instance to call the resume method to deliver the result (success value or error).
+
 (Function differences:) Swift provides four global Continuation functions: `withCheckedContinuation`, `withCheckedThrowingContinuation`, and their corresponding `Unsafe` versions. Since a function can only return once, So when using Continuation, we must ensure that `resume` function can only be called once and that the result is passed only once. Based on this rule, the difference between Checked and Unsafe lies in runtime checks. The Checked function will verify whether we have correctly called resume function and will provide clear crash information and hints if there is an error, while the Unsafe version performs no checks. About the Throwing function, that can pass or throw an error through `resume(throwing:)` function.
 
 # Swift
