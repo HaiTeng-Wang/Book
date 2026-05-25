@@ -113,8 +113,10 @@ I have not worked on a cloud storage encryption project before. However, I have 
 
 ### Salary
 What is your expected salary？
-
 Could you share the budget range for this position first? That would help us both align.
 
 ## 反问环节
-Could you introduce the team with me? 
+
+I want to know which company the contract is signed with, because I saw that the hirring company is Shanghai Dingli, not MEGA, and I don't know the reason.
+
+Could you share the team structure with me? How many iOS developers, and development model (agile or traditional)
