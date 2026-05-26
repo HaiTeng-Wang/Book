@@ -1,66 +1,3 @@
-# Must-Know Vocabulary
-## A
-Associated(associated value) \ argument
-## B
-## C
-Cycle(retain cycle, lifecycle) \ Capture(capture list) \ Constraint \ Convenience \ Compute (computed properties) \ Constant \ Conform(conform to the Hashable protocol, and meet requirements)
-
-## D
-Declare \ Define \ Describe (Describes what the function does) \ Designated \ Dot(dot syntax chain)
-## E
-Especially \ Escaping(escaping closure) \ Exit(eraly exit) \ Execute(Execute the code.) \ External \ Entity
-## F
-Force(force unwrapping)
-## G
-Generic (generic collection)
-## H
-## I
-Improve (improveing readability) \ In Summary \ Indicate \ Implicit(Implicit Or Explicit)
-## J
-## K
-## L
-## M
-Manual \ Multiple(multiple values) \ Mutable And Immutable(mutable variable, mutable state) \ Modern
-## N
-Nested(Nested Functions) \ Nil-coalescing (??)
-## O
-Otherwise(otherwise, the else block executes.) \ Omit(omit lable) \ Opaque(Opaque Types and Boxed Protocol Types) \ Optional(optional chaining)
-## P
-Parameter \ Principle
-## Q
-## R
-regardless of(The system will retry regardless of the error type.) \ Represent
-## S
-Serial(serial queue) \ statement (if statement, switch statement) \ Symbol \ Syntax \ Subscript \ Subscription \ Several
-## T
-Trailing(trailing closure)
-## U
-Unique(unique key) \ Unwrap(force unwarp, implicitly unwrapped optional)
-## V
-Variable \  
-## W
-## X
-## Y
-## Z
-
-| 符号 | 英文名称 | 中文名称 |
-| ----------- | ----------- | ----------- |
-| &	| ampersand | & 和号 |
-| @	| at sign	| @ 符号 |
-| #	| hash(pound sign)	| 井号 |
-| *	| asterisk	| * 星号 |
-| ; | semicolons | 分号 |
-| !	| exclamation mark	| 感叹号 |
-| ?	| question mark	| 问号 |
-| () | parentheses / round brackets	 | 圆括号 / 小括号 |
-| {}	| braces / curly braces	| 花括号 / 大括号 |
-| [] |	brackets / square brackets |	方括号 / 中括号 |
-| <> |	angle brackets	| 尖括号 |
-
-
----
-
-
 # Basic
 
 ## Memory management(ARC)
@@ -269,50 +206,101 @@ For example:
 
 
 ---
-
-
 # Swift
-
-## Swift VS OC
+## Swift VC OC
+Swift is a modern, safe, and fast language introduced in 2014. Objective-C is an older language.  
+Swift has cleaner syntax — for example, we only write code in one .swift file, but Objective-C requires both .h and .m files. So Swift requires less code than Objective-C.  
+Swift is also safer — for example, optionals help handle null values better, and stored properties must have a value during initialization.
+Swift also has better performance than Objective-C. For example, many types in Swift are designed as value types (like structs and enums). Value types avoid memory leaks because they are copied instead of shared. This also helps optimize memory usage and makes Swift faster.
 
 ## Structs VS Classes
 - Struct: value type; stack memory; immutable by default, copied on assignment; no inheritance. 
 - Class: reference type; heap memory; mutable, shared reference; supports inheritance.
-
-## Optional type
-
-## Generics
-Generics enable type safe code reuse across different data types.
-
-## Protocol
-A protocol in Swift defines a blueprint of methods, properties, or other requirements that a class, struct, or enum can adopt.  
-Protocol extensions allow we to provide default method implementations or add functionality to all types that conform to a protocol. This reduces code duplication and makes protocols more powerful.
+### Value Type vs Reference Type
+Value types like structs, enums, and tuples are copied when assigned. Reference types like classes are shared.
+With value types, changing one variable doesn't affect others. With reference types, all references use the same data.
+For example, if I pass a struct to a function and modify it, the original value doesn't change. But if I pass a class, the original object changes.
 
 ## Closure
 - Trailing closures: When a closure is the last argument, write it outside the parentheses. If it's the only argument, we can omit `()`. (eg: map, filter, etc)
 - Escaping closures: A closure that outlives the function, and executed later (e.g. stored for async callback). Must be marked `@escaping`. (@escaping)
 - Auto closures: `@autoclosure` automatically wraps expressions (eg: assert(condition: a > b)), the expression isn't evaluated until the closure is called.
 
+## Optional?
+An Optional means a value can be nil or have a value. It's written as Type?. It avoids directly accessing null objects, making the program safer.  
+In order to obtain the actual value, we need to unwrap an optional type, we can use: `if let`, `guard let`, or force unwrap (`!`), Only when we're 100% sure that value is not nil, Otherwise the app will be Crash.
+
+## Protocol
+A protocol defines a blueprint of methods and properties. Any type can conform to a protocol.(like: Class、Struct、Enum, etc). For example, we can declare a protocol for the ability to dance. If both dogs and humans follow this protocol, it means that both dogs and humans can dance.
+
+## Extension：
+An extension adds new functionality to an existing type, even system types like `Int` or `String`. For example, we can extend `Collection` to add a custom `isEmpty` API to check for all collection types.  
+We can also implementation the Protocol extensions, that allow us to provide default implementations for protocol methods.
+
 
 
 ---
-
-
-
 # SwiftUI
 
-## @State ...
+## What is SwiftUI?
+SwiftUI is Apple's modern framework for building user interfaces across all Apple platforms. It uses a declarative syntax, meaning I describe something, then UI should look like something, and based on the state to change UI, that automatically updates the UI when the state changes. SwiftUI keeps the code simple and clear.
 
-## 属性包装器
+## Difference between `SwiftUI` and `UIKit`?
+- SwiftUI = declarative (what you want) → less code, newer
+- UIKit = imperative (how to do it) → more code, older, more control
+
+## Property wrappers
+A Property Wrapper is a feature in Swift that let us add extra behavior to a property (like validation, caching, or UI updates) without writing repetitive code. We can reuse the setting and getting logic. (like @State, @Binding, @Published, @AppStorage etc.)
+### What are `@State`, `@Binding`, `@ObservedObject`, `@StateObject`, `@EnvironmentObject`, `@Environment`?
+- `@StateObject`: Used to observe an `ObservableObject`. The marked instance is stored outside the `Struct` and is only `initialized` when the view ****first appears****, So when the view refreshes, the instance remains unchanged. It is suitable for data models that the view needs to hold for a long time.
+- `@ObservedObject`: Used to observe an `ObservableObject`. If the instance is created within the view, it will be ****reinitialized**** when the view refreshes, so the marked instance usually depends on an external owner and is passed in from an external view. Suitable for observing data models passed in from a parent view.
+- `@State`: Used inside a view to manage simple local state like `Int`, `String`, `Bool`. Same as `@StateObject`, the value is stored outside the `Struct`, so the state will not be lost when the view rebuilds.
+- `@Binding`: Used for two-way communication between a parent view and a child view. It wraps a `get` closure and a `set` closure. Use `$` to pass the binding. When the child view changes the value, the parent view's state updates automatically.
+- `@EnvironmentObject`： Used to share a data model across all views. Any view can read it. And don't need to pass it manually from view to view.
+- `@Environment`: Used to access system or framework predefined environment values (e.g., current system language, colorScheme, etc.).
+
+## What is `some` View?
+`some` View is an opaque[oʊˈpeɪk] return type. It means the function returns some type that conforms to the View protocol, but I don't need to specify the exact type. SwiftUI uses this to hide complex generic types like `TupleView` or `ModifiedContent`
+- `TupleView`: is a generic structure that conforms to the `View` protocol, which can ****unify**** return types and combine multiple different views into a single type.
+- `ModifiedContent`: is a generic structure that represents a new view obtained after applying a modifier to an original view.
+
+## What is a `ViewBuilder`?
+It is a result builder that allows us to write multiple views inside closures like `VStack`, `List`, Or `if / for`.   
+It automatically collects up to 10 views into a TupleView.  
+we don't need to return a single view or wrap them manually. It keeps declarative syntax simple and clear.
+
+## How does SwiftUI handle layout?
+SwiftUI layout has three steps:  
+ - (1) Parent offers a size to the child.
+ - (2) hild chooses its own size based on that offer.
+ - (3) Parent places the child at a position.  
+ - Common layout components: `HStack, VStack, ZStack, Spacer, frame, padding`,etc.
+    ```swift
+    VStack { // (3). VStack puts the Text in the center by defaule
+        Text("Hello")
+        .frame(width: 50, height: 20) // (2). Text looks at its own .frame and says: "OK, I choose 50 width and 20 height."
+        .background(Color.red)
+    }
+    .frame(width: 100, height: 100) // (1). VStack says to Text: "You can have up to 100 width and 100 height."
+    .background(Color.yellow)
+    ```
 
 ## 生命周期
+SwiftUI views are structs, not classes. So no `viewDidLoad` or `viewWillAppear`. Instead, use these modifiers:
+- `.onAppear`	When the view appears on screen
+- `.onDisappear`	When the view leaves the screen
+- `.task`	When view appears, for async work
+- `.onChange(of:)`	When a value changes  
 
-## 布局
+Scene Lifecycle (App-level)   
+Use `@Environment(\.scenePhase)` to know our app's state:
+- `.active`	App is running in foreground
+- `.inactive`	App is switching state
+- `.background`	App is in background
+
 
 
 ---
-
-
 # Combine
 ### What is Combine?
 Combine is Apple’s framework for handling asynchronous events. It uses Publisher(eg: Timer.publish sends time every second) to send values over time, and Subscriber(eg: `sink`) to receive them. We can use operators like `map` or `filter` to change the data.
@@ -397,8 +385,6 @@ Also, inside the sink closure, we need use `[weak self]` to avoid retain cycles 
 
 
 ---
-
-
 # Performance Optimization
 ## How do you optimize the scrolling performance of UlTableView?
 We need to pay attention to the delegate methods that the table view must implement, which are also the most frequently called methods by the table view.  
@@ -423,9 +409,3 @@ Off-screen rendering happens when the system cannot draw a layer directly on the
   - We can use pre-processed rounded corner images or draw rounded corner images asynchronously.
   - We can use the shadowPath property instead of offset to set the view's shadow.
   - Although the rasterize attribute will cache the layer for 100 milliseconds, it will also have additional overhead and should not be used unless necessary. Also avoid unnecessary masking and alpha.
-
----
-
-# Testing Framework
-
-# Pod
