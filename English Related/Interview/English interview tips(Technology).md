@@ -324,7 +324,7 @@ CurrentValueSubject has an initial value and also sends the current value to new
 
 ### What is `AnyPublisher`? (`eraseToAnyPublisher`)
 `AnyPublisher` is a type-erased wrapper for a publisher. It hides the details of the underlying publisher, like its specific type (such as `CurrentValueSubject`). It's useful when we want to return a publisher from a function without exposing the implementation details.  
-For example, instead of returning `CurrentValueSubject<String, Never>`, we can use the `eraseToAnyPublisher` API to turn `CurrentValueSubject<String, Never>` into `AnyPublisher<String, Never>`. The caller only knows they can subscribe, and can only perform operations like `sink`, `map`, etc. They don't have to care about, and don't need to know, exactly what's inside.
+For example, instead of returning `CurrentValueSubject<String, Never>`, we can use the `eraseToAnyPublisher` API to turn `CurrentValueSubject<String, Never>` into `AnyPublisher<String, Never>`. The caller only knows they can subscribe, and can only perform operations like `sink`, `map`, etc. They don't have to care, and don't need to know, exactly what's inside.
 
 ### What is `Cancellable`? How to avoid memory leaks?
 `Cancellable` is a protocol that allows me to cancel a subscription and stop receiving values. Every call to `sink` or `assign` returns a `Cancellable` object.  
